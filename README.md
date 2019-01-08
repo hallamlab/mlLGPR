@@ -52,8 +52,8 @@ To perform all of the analysis using fused coefficients use:
 
 If you employ mlLGPR in your research, please consider citing the following papers presented at PLOS 2019 and [] 2019:
 
-- M. A. Basher, Abdur Rahman, and Steven J. Hallam. **["Multi-label classification approach to metabolic pathway inference with rich pathway features."](https://github.com/atante/xXx.pdf)**, PLoS computational biology (2019).
-- M. A. Basher, Abdur Rahman, and Steven J. Hallam. **["Enhancing mlLGPR by Fusing Similar Metabolic Pathways Coefficients."](https://github.com/atante/xXx.pdf)** IEEE/ACM Transactions on Computational Biology and Bioinformatics 8 (2019).
+- [To be Added]
+
 
 ## Contact
 
