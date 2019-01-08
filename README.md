@@ -6,7 +6,7 @@ _The above picture is exported from_ [Wikipedia](https://en.wikipedia.org/wiki/M
 
 ## Basic Description
 
-mlLGPR (multi-label Logistic Regression for Pathway Prediction) is a novel pathway prediction framework to recover metabolic pathways from large-scale metagenomics datasets and tackle some pathway related obstacles. Unlike the conventional supervised methods that assume each sample is associated with a single class label within a number of candidate classes, a metagenomics dataset usually comprises of multiple pathways per sample, thus, putting the problem in the context of a multi-label classification approach. The originality of our method lies:
+mlLGPR (**m**ulti-**l**abel **L**ogistic Re**G**ression for **P**athway P**R**ediction) is a novel pathway prediction framework to recover metabolic pathways from large-scale metagenomics datasets and tackle some pathway related obstacles. Unlike the conventional supervised methods that assume each sample is associated with a single class label within a number of candidate classes, a metagenomics dataset usually comprises of multiple pathways per sample, thus, putting the problem in the context of a multi-label classification approach. The originality of our method lies:
 - in the search for potential pathways (given enzymatic reactions as inputs)
 - in the extraction of pathway/reaction transformation patterns
 - in the evaluation strategies and significance tests
