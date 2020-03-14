@@ -1,5 +1,3 @@
-# Metabolic Pathways Inference Given a Set of ECs with Abundances 
-
 ![Metabolic_Metro_Map](Metabolic_Metro_Map.svg)
 
 _The above picture is exported from_ [Wikipedia](https://en.wikipedia.org/wiki/Metabolic_pathway).
