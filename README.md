@@ -2,6 +2,8 @@
 
 _The above picture is exported from_ [Wikipedia](https://en.wikipedia.org/wiki/Metabolic_pathway).
 
+## WARNING: mlLGPR is currently not active. Please use [triUMPF](https://github.com/hallamlab/triUMPF).
+
 ## Basic Description
 
 mlLGPR (**m**ulti-**l**abel **L**ogistic Re**G**ression for **P**athway P**R**ediction) is a novel pathway prediction framework to recover metabolic pathways from large-scale metagenomics datasets and tackle some pathway related obstacles. Unlike the conventional supervised methods that assume each sample is associated with a single class label within a number of candidate classes, a metagenomics dataset usually comprises of multiple pathways per sample, thus, putting the problem in the context of a multi-label classification approach. The originality of our method lies:
