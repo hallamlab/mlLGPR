@@ -28,7 +28,7 @@ Our comprehensive analysis using seven designed experimental protocols demonstra
 To display mlLGPR's running options, use: `python main.py --help`. It should be self-contained. 
 
 ### Basic Usage
-All the command arguments are initiated through [main.py](main.py) file.
+All the command arguments are initiated through [main.py](main.py) file. You need to obtain [MetaCyc](https://metacyc.org/) database in order to extract information. Please modify the content of ``Path.py`` inside utility folder as necessary.
 
 #### Example
 To extract information from [MetaCyc](https://metacyc.org/), create golden and synthetic samples, train mlLGPR using elastic-net, evaluate, and predict on dataset, simply set the arguments in the [main.py](main.py) file as:
