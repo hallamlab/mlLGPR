@@ -2,7 +2,7 @@
 
 _The above picture is exported from_ [Wikipedia](https://en.wikipedia.org/wiki/Metabolic_pathway).
 
-## WARNING: mlLGPR is currently not maintained. Please use [triUMPF](https://github.com/hallamlab/triUMPF).
+## mlLGPR is currently not maintained. A new model is coming soon. Please stay tuned.
 
 ## Basic Description
 
@@ -37,7 +37,7 @@ To extract information from [MetaCyc](https://metacyc.org/), create golden and s
 
 
 ## Citing
-If you employ *mlLGPR* in your research, please consider citing the following paper:
+If you find *mlLGPR* useful in your research, please consider citing the following paper:
 - M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway inference using multi-label classification with rich pathway features."](https://www.biorxiv.org/content/10.1101/2020.02.02.919944v1.abstract)**, bioRxiv (2020).
 
 ## Contact
