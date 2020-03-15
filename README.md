@@ -1,4 +1,4 @@
-![Metabolic_Metro_Map](Metabolic_Metro_Map.svg)
+![Metabolic_Metro_Map](Metabolic_Metro_Map.png)
 
 _The above picture is exported from_ [Wikipedia](https://en.wikipedia.org/wiki/Metabolic_pathway).
 
