@@ -4,13 +4,7 @@ _The above picture is exported from_ [Wikipedia](https://en.wikipedia.org/wiki/M
 
 ## Basic Description
 
-mlLGPR (**m**ulti-**l**abel **L**ogistic Re**G**ression for **P**athway P**R**ediction) is a novel pathway prediction framework to recover metabolic pathways from large-scale metagenomics datasets and tackle some pathway related obstacles. Unlike the conventional supervised methods that assume each sample is associated with a single class label within a number of candidate classes, a metagenomics dataset usually comprises of multiple pathways per sample, thus, putting the problem in the context of a multi-label classification approach. The originality of our method lies:
-- in the search for potential pathways (given enzymatic reactions as inputs)
-- in the extraction of pathway/reaction transformation patterns
-- in the evaluation strategies and significance tests
-- in the large-scale applicability owing to the computational efficiency. 
-
-Our comprehensive analysis using seven designed experimental protocols demonstrates the benefits of our proposed method, enabling fast and relatively efficient prediction on a large-scale metagenomics dataset. 
+We present mlLGPR (**m**ulti-**l**abel **L**ogistic Re**G**ression for **P**athway P**R**ediction) is a software package that uses supervised multi-label classification and rich pathway features to infer metabolic networks at the individual, population and community levels of organization.
 
 ## Dependencies
 
@@ -25,7 +19,14 @@ Our comprehensive analysis using seven designed experimental protocols demonstra
 ### Options
 To display mlLGPR's running options, use: `python main.py --help`. It should be self-contained. 
 
-### Basic Usage
+## Installation and Basic Usage
+Run the following commands to clone the repository to an approriate location:
+
+``git clone https://github.com/hallamlab/mlLGPR.git``
+
+For all experiments, navigate to ``src`` folder then run the commands of your choice. For example, to display *mlLGPR*'s running options use: `python main.py --help`. It should be self-contained. 
+
+
 All the command arguments are initiated through [main.py](main.py) file. 
 - You need to obtain [MetaCyc](https://metacyc.org/) database in order to extract information. Please modify the content of ``Path.py`` inside utility folder as necessary.
 - In addition, please download six database: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc from [biocyc](https://biocyc.org/).
@@ -46,3 +47,6 @@ If you find *mlLGPR* useful in your research, please consider citing the followi
 
 ## Contact
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
+
+## Upcoming features
+- Incorporate graph based learning.
