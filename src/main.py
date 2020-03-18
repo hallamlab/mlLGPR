@@ -15,7 +15,6 @@ logistic regression train.
 ===================================================================
 '''
 
-import json
 import os
 from argparse import ArgumentParser
 
@@ -28,7 +27,6 @@ from utility.Arguments import Arguments
 from parsing.Parse_Input import InputMain
 from parsing.Parse_BioCyc import BioCycMain
 from train.Train import TrainMain
-from eda.EDA import EDAMain
 
 
 def internalArgs(parse_args):
