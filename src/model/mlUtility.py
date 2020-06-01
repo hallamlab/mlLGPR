@@ -497,22 +497,6 @@ def Score(clf, X_file, y_file, applyTCriterion=False, loadBatch=False, sixDB=Fal
         SaveData(data='\t\t\t--> Average macro f1-score: {0:.4f}\n'.format(f1_samples_macro), fname=fname,
                  savepath=savepath, mode=mode, wString=True, printTag=False)
 
-        # print('\t\t4)- AUC-score...')
-        # auc_samples_average = roc_auc_score(y_true, y_pred, average='samples')
-        # auc_samples_micro = roc_auc_score(y_true, y_pred, average='micro')
-        # auc_samples_macro = roc_auc_score(y_true, y_pred, average='macro')
-        # print('\t\t\t--> Average sample AUC-score: {0:.4f}'.format(auc_samples_average))
-        # print('\t\t\t--> Average micro AUC-score: {0:.4f}'.format(auc_samples_micro))
-        # print('\t\t\t--> Average macro AUC-score: {0:.4f}'.format(auc_samples_macro))
-        # SaveData(data='\t\t4)- AUC-score...\n',
-        #               fname=fname, savepath=savepath, mode=mode, wString=True, printTag=False)
-        # SaveData(data='\t\t\t--> Average sample AUC-score: {0:.4f}\n'.format(auc_samples_average), fname=fname,
-        #               savepath=savepath, mode=mode, wString=True, printTag=False)
-        # SaveData(data='\t\t\t--> Average micro AUC-score: {0:.4f}\n'.format(auc_samples_micro), fname=fname,
-        #               savepath=savepath, mode=mode, wString=True, printTag=False)
-        # SaveData(data='\t\t\t--> Average macro AUC-score: {0:.4f}\n'.format(auc_samples_macro), fname=fname,
-        #               savepath=savepath, mode=mode, wString=True, printTag=False)
-
         print('\t\t5)- Jaccard similarity score...')
         js_samples_normalize = jaccard_similarity_score(y, y_hat)
         js_samples_not_normalize = jaccard_similarity_score(y, y_hat, normalize=False)
