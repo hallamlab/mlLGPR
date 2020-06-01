@@ -113,13 +113,6 @@ def _parseData(b_arg):
     else:
         print('\t>> Building ec properties is not applied...')
 
-    print('\n*** BUILDING PATHWAY SIMILARITY MATRIX ...', )
-    if b_arg.build_pathway_similarities:
-        objData.BuildSimilarityMatrix(ptwECMatrix=ptw_ec_spmatrix, fName=b_arg.pathway_similarity,
-                                      savepath=b_arg.ospath)
-    else:
-        print('\t>> Building pathway similarity matrix is not applied...')
-
     ##########################################################################################################
     ######################                 CONSTRUCT SYNTHETIC CORPORA                  ######################
     ##########################################################################################################

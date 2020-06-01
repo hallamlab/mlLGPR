@@ -154,20 +154,6 @@ def _train(t_arg, channel):
     if t_arg.train:
         print('\n*** BEGIN TRAINING USING MULTI-LABEL LEARNING...')
 
-        if t_arg.adjust_by_similarity:
-            print('\t>> Retreiving items similarity score matrix file from: {0:s}'.format(t_arg.pathway_similarity))
-            if t_arg.similarity_type == "sw":
-                similarityFile = t_arg.pathway_similarity + '_sw.pkl'
-            elif t_arg.similarity_type == "chi2":
-                similarityFile = t_arg.pathway_similarity + '_chi2.pkl'
-            elif t_arg.similarity_type == "cos":
-                similarityFile = t_arg.pathway_similarity + '_cos.pkl'
-            elif t_arg.similarity_type == "rbf":
-                similarityFile = t_arg.pathway_similarity + '_rbf.pkl'
-            similarityScoreFile = os.path.join(t_arg.ospath, similarityFile)
-        else:
-            similarityScoreFile = None
-
         nSample = t_arg.nsample
         fObject = _datasetType(t_arg)
         dataFileName = fObject + '_' + str(nSample)
@@ -186,39 +172,28 @@ def _train(t_arg, channel):
 
         print('\t>> Building multi-label logistic regression train...')
 
-        if t_arg.grid == True:
-            alpha = np.logspace(np.log10(0.0001), np.log10(1), num=5)
-            l1_ratio = np.logspace(np.log10(0.15), np.log10(1), num=5)
-            sigma = np.linspace(1.0, 3.0, num=5)
-            if t_arg.adjust_by_similarity:
-                alpha = np.logspace(np.log10(0.01), np.log10(1), num=5)
-        else:
-            alpha = t_arg.alpha
-            l1_ratio = t_arg.l1_ratio
-            sigma = t_arg.sigma
+        alpha = t_arg.alpha
+        l1_ratio = t_arg.l1_ratio
+        sigma = t_arg.sigma
 
         clf = mlLGPR(classes=value_lst[0], classLabelsIds=value_lst[1],
                      labelsComponentsFile=labelsComponentsMappingFile,
                      itemPrintFeaturesFile=ptwFeaturesFile,
-                     similarityScoreFile=similarityScoreFile,
                      scaleFeature=t_arg.scale_feature,
                      sMethod=t_arg.norm_op, binarizeAbundance=t_arg.binarize,
-                     grid=t_arg.grid, useReacEvidenceFeatures=t_arg.useReacEvidenceFeatures,
+                     useReacEvidenceFeatures=t_arg.useReacEvidenceFeatures,
                      usePossibleClassFeatures=t_arg.usePossibleClassFeatures,
                      useItemEvidenceFeatures=t_arg.useItemEvidenceFeatures,
                      useLabelComponentFeatures=t_arg.useLabelComponentFeatures,
                      nTotalComponents=value_lst[2], nTotalClassLabels=value_lst[3],
                      nTotalEvidenceFeatures=value_lst[4],
                      nTotalClassEvidenceFeatures=value_lst[5],
-                     penalty=t_arg.penalty, adjustCoef=t_arg.adjust_by_similarity,
-                     coef_similarity_type=t_arg.similarity_type,
-                     customFit=t_arg.customFit, useClipping=t_arg.useClipping, alpha=alpha,
+                     penalty=t_arg.penalty, alpha=alpha,
                      l1_ratio=l1_ratio, sigma=sigma, fit_intercept=t_arg.fit_intercept,
                      max_inner_iter=t_arg.max_inner_iter, nEpochs=t_arg.nEpochs,
                      nBatches=t_arg.nBatches, testInterval=t_arg.test_interval,
                      shuffle=t_arg.shuffle, adaptive_beta=t_arg.adaptive_beta,
                      threshold=t_arg.threshold, learning_rate=t_arg.learning_rate,
-                     eta0=t_arg.eta0, power_t=t_arg.power_t,
                      random_state=t_arg.random_state, n_jobs=t_arg.n_jobs)
         print('\t\t## The following parameters are applied:\n\t\t\t{0}'.format(clf.print_arguments()),
               file=sys.stderr)
@@ -231,22 +206,16 @@ def _train(t_arg, channel):
                 subSampleShuffle=t_arg.shuffle, subsampleSize=t_arg.sub_sample_size, savename=t_arg.mllr,
                 savepath=t_arg.mdpath)
 
-        if t_arg.adjust_by_similarity:
-            baseName = 'mllg_time_fu'
+        if t_arg.l1_ratio == 1:
+            baseName = 'mllg_time_l1'
+        elif t_arg.l1_ratio == 0:
+            baseName = 'mllg_time_l2'
         else:
-            if t_arg.l1_ratio == 1:
-                baseName = 'mllg_time_l1'
-            elif t_arg.l1_ratio == 0:
-                baseName = 'mllg_time_l2'
-            else:
-                baseName = 'mllg_time_en'
+            baseName = 'mllg_time_en'
         elapsedTime = str((baseName, time.time() - startTime))
         saveTimeFilename = baseName + '.txt'
         SaveData(data=elapsedTime, fname=saveTimeFilename, savepath=t_arg.rspath, tag='time performance', mode='w',
                  wString=True)
-        if clf.grid:
-            gridPara = clf.get_best_grid_params()
-            print('\t\t## Best hyper-parameters with counts: ({0}, {1})'.format(gridPara[0], gridPara[1]))
         print('\t>> DONE...')
 
     ##########################################################################################################
@@ -367,55 +336,6 @@ def _train(t_arg, channel):
         clf.n_jobs = t_arg.n_jobs
         saveFileName = t_arg.predict_file
         saveFileName = _saveFileName(clf, saveFileName)
-
-        ### Synset Dataset
-        # print('\t>> Predicting class labels for: {0:s}...'.format(value_lst[6]))
-        # X_file = os.path.join(t_arg.dspath, value_lst[6])
-        # y_pred = clf.Predict(X_file=X_file)
-        # labels = clf.mlb.inverse_transform(y_pred)
-        # SaveData(data='>> Predicted class labels for: {0:s}...\n'.format(value_lst[6]),
-        #          fname=saveFileName, savepath=t_arg.rspath, mode='a',
-        #          wString=True, printTag=False)
-        # for sidx in np.arange(len(labels)):
-        #     SaveData(
-        #         data='\t{0})- Total set of pathways for the sample {0}: {1}...\n'.format(sidx + 1, len(labels[sidx])),
-        #         fname=saveFileName, savepath=t_arg.rspath, mode='a',
-        #         wString=True, printTag=False)
-        #     for pid in labels[sidx]:
-        #         SaveData(data='\t\t' + pid + '\n', fname=saveFileName, savepath=t_arg.rspath,
-        #                  mode='a', wString=True, printTag=False)
-        #
-        # print('\t>> Predicting class labels for: {0:s}...'.format(value_lst[8]))
-        # X_file = os.path.join(t_arg.dspath, value_lst[8])
-        # y_pred = clf.Predict(X_file=X_file)
-        # labels = clf.mlb.inverse_transform(y_pred)
-        # SaveData(data='>> Predicted class labels for: {0:s}...\n'.format(value_lst[8]),
-        #          fname=saveFileName, savepath=t_arg.rspath, mode='a',
-        #          wString=True, printTag=False)
-        # for sidx in np.arange(len(labels)):
-        #     SaveData(
-        #         data='\t{0})- Total set of pathways for the sample {0}: {1}...\n'.format(sidx + 1, len(labels[sidx])),
-        #         fname=saveFileName, savepath=t_arg.rspath, mode='a',
-        #         wString=True, printTag=False)
-        #     for pid in labels[sidx]:
-        #         SaveData(data='\t\t' + pid + '\n', fname=saveFileName, savepath=t_arg.rspath,
-        #                  mode='a', wString=True, printTag=False)
-        #
-        # print('\t>> Predicting class labels for: {0:s}...'.format(value_lst[10]))
-        # X_file = os.path.join(t_arg.dspath, value_lst[10])
-        # y_pred = clf.Predict(X_file=X_file)
-        # labels = clf.mlb.inverse_transform(y_pred)
-        # SaveData(data='>> Predicted class labels for: {0:s}...\n'.format(value_lst[10]),
-        #          fname=saveFileName, savepath=t_arg.rspath, mode='a',
-        #          wString=True, printTag=False)
-        # for sidx in np.arange(len(labels)):
-        #     SaveData(
-        #         data='\t{0})- Total set of pathways for the sample {0}: {1}...\n'.format(sidx + 1, len(labels[sidx])),
-        #         fname=saveFileName, savepath=t_arg.rspath, mode='a',
-        #         wString=True, printTag=False)
-        #     for pid in labels[sidx]:
-        #         SaveData(data='\t\t' + pid + '\n', fname=saveFileName, savepath=t_arg.rspath,
-        #                  mode='a', wString=True, printTag=False)
 
         ### Metagenomics Dataset
         dataFileName = t_arg.metegenomics_dataset + '_' + str(418)

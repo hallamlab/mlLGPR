@@ -6,18 +6,16 @@ Author = Abdurrahman Abul-Basher
 Version = 1.00
 License = Hallam's lab
 Email = ar.basher@alumni.ubc.ca
-TimeStamp: Thursday, December 28, 2018
+TimeStamp: Thursday, December 28, 2019
 
 This file is the main entry used to extract metacyc information,
 and perform learning and prediction on dataset using multi-label
 logistic regression train.
-
 ===================================================================
 '''
 
 import os
 from argparse import ArgumentParser
-
 try:
     import cPickle as pkl
 except:
@@ -52,7 +50,6 @@ def internalArgs(parse_args):
         arg.build_ec_properties = False
     else:
         arg.build_ec_properties = True
-    arg.build_pathway_similarities = parse_args.build_pathway_similarities
 
     ##########################################################################################################
     ##########                                  ARGUMENTS FOR PATHS                                 ##########
@@ -70,21 +67,20 @@ def internalArgs(parse_args):
     ##########################################################################################################
 
     arg.objectname = parse_args.objectname
-    arg.pathwayfeature = parse_args.pathwayfeature
-    arg.ecfeature = parse_args.ecfeature
-    arg.pathway_similarity = parse_args.pathway_similarity
-    arg.syntheticfeature = parse_args.syntheticfeature
-    arg.gene_go = parse_args.gene_go
-    arg.gene_product = parse_args.gene_product
-    arg.reaction_gene = parse_args.reaction_gene
-    arg.reaction_ec = parse_args.reaction_ec
-    arg.pathway_gene = parse_args.pathway_gene
-    arg.pathway_reaction = parse_args.pathway_reaction
-    arg.pathway_ec = parse_args.pathway_ec
-    arg.syntheticdataset_ptw_ec = parse_args.syntheticdataset_ptw_ec
-    arg.syntheticdataset_rxn_ec = parse_args.syntheticdataset_rxn_ec
-    arg.goldendataset_ptw_ec = parse_args.goldendataset_ptw_ec
-    arg.goldendataset_rxn_ec = parse_args.goldendataset_rxn_ec
+    arg.pathwayfeature = 'pathwayfeature.pkl'
+    arg.ecfeature = 'ecfeature.pkl'
+    arg.pathway_similarity = 'pathway_similarity'
+    arg.syntheticfeature = 'syn_feature'
+    arg.gene_go = 'gene_go.pkl'
+    arg.gene_product = 'gene_product.pkl'
+    arg.reaction_gene = 'reaction_gene.pkl'
+    arg.reaction_ec = 'reaction_ec.pkl'
+    arg.pathway_gene = 'pathway_gene.pkl'
+    arg.pathway_reaction = 'pathway_reaction.pkl'
+    arg.syntheticdataset_ptw_ec = 'syn_dataset_ptw_ec'
+    arg.syntheticdataset_rxn_ec = 'syn_dataset_rxn_ec'
+    arg.goldendataset_ptw_ec = 'gold_dataset_ptw_ec'
+    arg.goldendataset_rxn_ec = 'gold_dataset_rxn_ec'
     arg.mllr = parse_args.mllr
     arg.score_file = parse_args.score_file
     arg.predict_file = parse_args.predict_file
@@ -179,25 +175,20 @@ def internalArgs(parse_args):
             if os.path.exists(os.path.join(path.MODEL_PATH, parse_args.trained_model)):
                 arg.model = parse_args.trained_model
             else:
-                raise FileNotFoundError('Please provide a valid path to the already trained train')
+                raise FileNotFoundError(
+                    'Please provide a valid path to the already trained train')
 
     ###********************             LOGISTIC REGRESSION             ********************###
     arg.penalty = parse_args.penalty
     arg.alpha = parse_args.alpha
     arg.l1_ratio = 1 - parse_args.l2_ratio
-    arg.sigma = parse_args.sigma
+    arg.sigma = 2
     arg.use_tCriterion = parse_args.use_tCriterion
-    arg.adjust_by_similarity = parse_args.adjust_by_similarity
-    arg.similarity_type = parse_args.similarity_type
     arg.fit_intercept = parse_args.fit_intercept
-    arg.customFit = parse_args.customFit
-    arg.useClipping = parse_args.useClipping
     arg.adaptive_beta = parse_args.adaptive_beta
     arg.threshold = parse_args.threshold
     arg.learning_rate = parse_args.learning_rate
-    arg.eta0 = parse_args.eta0
-    arg.power_t = parse_args.power_t
-    arg.shuffle = parse_args.shuffle
+    arg.shuffle = True
     arg.max_inner_iter = parse_args.max_inner_iter
 
     return arg
@@ -208,6 +199,15 @@ def parseCommandLine():
     Returns the arguments from the command line.
     """
     parser = ArgumentParser()
+
+    ##########################################################################################################
+    ##########                             ARGUMENTS SHARED BY ALL FILES                            ##########
+    ##########################################################################################################
+
+    parser.add_argument('--display_interval', default=50, type=int,
+                        help='How often to display results in # of iterations. (default value: 50)')
+    parser.add_argument('--n_jobs', default=2, type=int,
+                        help='Number of CPU cores to be consumed. (default value: 2)')
 
     ##########################################################################################################
     ##########                              ARGUMENTS FOR SAVING FILES                              ##########
@@ -221,8 +221,6 @@ def parseCommandLine():
                         help='Whether to load properties of pathways. (default value: true)')
     parser.add_argument('--load_ec_properties', action='store_false', default=True,
                         help='Whether to load properties of ECs. (default value: true)')
-    parser.add_argument('--build_pathway_similarities', action='store_true', default=False,
-                        help='Whether to build distance matrix among pathways. (default value: false)')
 
     ##########################################################################################################
     ##########                                  ARGUMENTS FOR PATHS                                 ##########
@@ -247,49 +245,12 @@ def parseCommandLine():
 
     parser.add_argument('--objectname', type=str, default='object.pkl',
                         help='The file name for the object data. (default value: "object.pkl")')
-    parser.add_argument('--pathwayfeature', type=str, default='pathwayfeature.pkl',
-                        help='The file name to store the featrues of pathways. (default value: "pathwayfeature.pkl")')
-    parser.add_argument('--ecfeature', type=str, default='ecfeature.pkl',
-                        help='The file name to store the featrues of ECs. (default value: "ecfeature.pkl")')
-    parser.add_argument('--pathway_similarity', type=str, default='pathway_similarity',
-                        help='The file name to store pathways distances. (default value: "pathway_similarity")')
-    parser.add_argument('--syntheticfeature', type=str, default='syn_feature',
-                        help='The file name to store synthetic data features. (default value: "syn_feature")')
-    parser.add_argument('--gene_go', type=str, default='gene_go.pkl',
-                        help='The file name to store Gene to GO mapping data. (default value: "gene_go.pkl")')
-    parser.add_argument('--gene_product', type=str, default='gene_product.pkl',
-                        help='The file name to store Gene to Product mapping data. (default value: "gene_product.pkl")')
-    parser.add_argument('--reaction_gene', type=str, default='reaction_gene.pkl',
-                        help='The file name to store Reaction to Gene mapping data. (default value: "reaction_gene.pkl")')
-    parser.add_argument('--reaction_ec', type=str, default='reaction_ec.pkl',
-                        help='The file name to store Reaction to EC mapping data. (default value: "reaction_ec.pkl")')
-    parser.add_argument('--pathway_gene', type=str, default='pathway_gene.pkl',
-                        help='The file name to store Pathway to Gene mapping data. (default value: "pathway_gene.pkl")')
-    parser.add_argument('--pathway_reaction', type=str, default='pathway_reaction.pkl',
-                        help='The file name to store Pathway to Reaction mapping data. (default value: "pathway_reaction.pkl")')
-    parser.add_argument('--pathway_ec', type=str, default='pathway_ec.pkl',
-                        help='The file name to store Pathway to EC mapping data. (default value: "pathway_ec.pkl")')
-    parser.add_argument('--syntheticdataset_ptw_ec', type=str, default='syn_dataset_ptw_ec',
-                        help='The file name to store the synthetic datasets that leverage Pathway to EC mapping information. (default value: "syn_dataset_ptw_ec")')
-    parser.add_argument('--syntheticdataset_rxn_ec', type=str, default='syn_dataset_rxn_ec',
-                        help='The file name to store the synthetic datasets that leverage Reaction to EC mapping information. (default value: "syn_dataset_rxn_ec")')
-    parser.add_argument('--goldendataset_ptw_ec', type=str, default='gold_dataset_ptw_ec',
-                        help='The file name to store the golden datasets that leverage Pathway to EC mapping information. (default value: "gold_dataset_ptw_ec")')
-    parser.add_argument('--goldendataset_rxn_ec', type=str, default='gold_dataset_rxn_ec',
-                        help='The file name to store the golden datasets that leverage Reaction to EC mapping information. (default value: "gold_dataset_rxn_ec")')
-    parser.add_argument('--mllr', type=str, default='mlLGPR', help='The train name. (default value: "mlLGPR")')
+    parser.add_argument('--mllr', type=str, default='mlLGPR',
+                        help='The train name. (default value: "mlLGPR")')
     parser.add_argument('--score_file', type=str, default='mlLGPR_scores',
                         help='The file name to store the scores of results. (default value: "mlLGPR_scores")')
     parser.add_argument('--predict_file', type=str, default='mlLGPR_labels',
                         help='The file name to store the predicted pathways. (default value: "mlLGPR_labels")')
-
-    ##########################################################################################################
-    ##########                             ARGUMENTS SHARED BY ALL FILES                            ##########
-    ##########################################################################################################
-
-    parser.add_argument('--display_interval', default=50, type=int,
-                        help='How often to display results in # of iterations. (default value: 50)')
-    parser.add_argument('--n_jobs', default=2, type=int, help='Number of CPU cores to be consumed. (default value: 2)')
 
     ##########################################################################################################
     ##########                  ARGUMENTS USED FOR CONSTRUCTING SYNTHETIC DATASET                   ##########
@@ -311,7 +272,8 @@ def parseCommandLine():
                         help='The lower bound of components in which corruption should not be proceeded for a pathway in creating synthetic samples. (default value: 1)')
     parser.add_argument('--ncomponents_to_corrupt_outside', default=2, type=int,
                         help='Number of false components to be added in creating synthetic samples. (default value: 2)')
-    parser.add_argument('--use_ec', action='store_false', default=True, help='Whether to use EC. (default value: true)')
+    parser.add_argument('--use_ec', action='store_false', default=True,
+                        help='Whether to use EC. (default value: true)')
     parser.add_argument('--construct_reaction', action='store_true', default=False,
                         help='Whether to construct reactions samples. (default value: false)')
     parser.add_argument('--constraint_kb', default='metacyc', type=str,
@@ -384,8 +346,6 @@ def parseCommandLine():
     parser.add_argument('--norm_op', default='normalizer', type=str, choices=['minmax', 'maxabs', 'standard',
                                                                               'robust', 'normalizer'],
                         help='Transforms features by applying an appropriate feature scaling method. Possible choices are minmax, maxabs, standard, robust, or normalizer. (default value: "normalizer")')
-    parser.add_argument('--grid', action='store_true', default=False,
-                        help='Whether exhaustive search over specified parameter values for mlLGPR. (default value: false)')
     parser.add_argument('--train_size', default=0.8, type=float,
                         help='The training size of type float between 0.0 and 1.0 for mlLGPR. (default value: 0.8)')
     parser.add_argument('--val_size', default=0.15, type=float,
@@ -400,7 +360,8 @@ def parseCommandLine():
                         help='The size of a single mini-batch for training mlLGPR. (default value: 5)')
     parser.add_argument('--test_interval', default=2, type=int,
                         help='How often to test mlLGPR\'s performance. (default value: 2)')
-    parser.add_argument('--random_state', default=12345, type=int, help='Random seed. (default value: 12345)')
+    parser.add_argument('--random_state', default=12345,
+                        type=int, help='Random seed. (default value: 12345)')
     parser.add_argument('--ds_type', default='syn_ds', type=str, choices=['syn_ds', 'meta_ds', 'gold_ds'],
                         help='Dataset types: syn_ds, meta_ds, gold_ds. (default value: "syn_ds")')
     parser.add_argument('--load_prepared_dataset', action='store_false', default=True,
@@ -416,34 +377,19 @@ def parseCommandLine():
                         help='Constant that multiplies the regularization term to control the amount to regularize parameters and in our paper it is lambda. (default value: 0.0001)')
     parser.add_argument('--l2_ratio', default=0.65, type=float,
                         help='The ellasticnet mixing parameter, with 0 <= l2_ratio <= 1. l2_ratio=0 corresponds to L1 penalty, l2_ratio=1 to L2. It could be also used as a trade-off between l2 and laplacian regularization and in our paper it is alpha. (default value: 0.65)')
-    parser.add_argument('--sigma', default=2, type=float,
-                        help='Constant that scales the amount of laplacian norm regularization paramters. (default value: 2)')
     parser.add_argument('--use_tCriterion', action='store_true', default=False,
                         help='Whether to employ adaptive mlLGPR strategy. (default value: false)')
     parser.add_argument('--adaptive_beta', default=0.45, type=float,
                         help='The adaptive beta paramter for mlLGPR. (default value: 0.45)')
-    parser.add_argument('--adjust_by_similarity', action='store_true', default=False,
-                        help='Whether to apply fused paramters technique. (default value: false)')
-    parser.add_argument('--similarity_type', default='sw', type=str, choices=['chi2', 'rbf', 'cos', 'sw'],
-                        help='The similarity type to be applied. (default value: "sw")')
     parser.add_argument('--fit_intercept', action='store_false', default=True,
                         help='Whether the intercept should be estimated or not. (default value: true)')
-    parser.add_argument('--customFit', action='store_true', default=False,
-                        help='Whether use our implemeneted custom fit. (default value: false)')
-    parser.add_argument('--useClipping', action='store_true', default=False,
-                        help='Whether to apply gradient clipping. (default value: false)')
     parser.add_argument('--threshold', default=0.5, type=float,
                         help='The cutoff threshold for mlLGPR. (default value: 0.5)')
     parser.add_argument('--learning_rate', default='optimal', type=str, choices=['constant', 'invscaling', 'adaptive',
                                                                                  'optimal'],
                         help='The learning rate schedule. (default value: "optimal")')
-    parser.add_argument('--eta0', default=0.0, type=float, help='The initial learning rate. (default value: 0.0)')
-    parser.add_argument('--power_t', default=0.5, type=float,
-                        help='The exponent for inverse scaling learning rate. (default value: 0.5)')
     parser.add_argument('--max_inner_iter', default=1500, type=float,
                         help='Similar to nEpochs if nBatches = 1 better to set to 1500. (default value: 1500)')
-    parser.add_argument('--shuffle', action='store_false', default=True,
-                        help='Whether or not the training data should be shuffled after each epoch. (default value: true)')
 
     ##########################################################################################################
     ##########                               ARGUMENTS FOR USABILITY                                ##########
@@ -468,23 +414,29 @@ def parseCommandLine():
         def __init__(self, argument, train):
             self.argument = argument
             if train:
-                print('*** Saving original training arguments into file: original_training_arguments.pkl')
+                print(
+                    '*** Saving original training arguments into file: original_training_arguments.pkl')
                 if not os.path.isdir(self.argument.mdpath):
                     os.mkdir(self.argument.mdpath)
-                fname = os.path.join(self.argument.mdpath, 'original_training_arguments.pkl')
+                fname = os.path.join(self.argument.mdpath,
+                                     'original_training_arguments.pkl')
                 with open(fname, 'wb') as f_out:
                     pkl.dump(self.argument, f_out, -1)
             self.COMPLETE = 1
 
         def save(self):
-            print('\t--> Saving current training arguments into file: current_training_arguments.pkl')
-            fname = os.path.join(self.argument.mdpath, 'current_training_arguments.pkl')
+            print(
+                '\t--> Saving current training arguments into file: current_training_arguments.pkl')
+            fname = os.path.join(self.argument.mdpath,
+                                 'current_training_arguments.pkl')
             with open(fname, 'wb') as f_out:
                 pkl.dump(self.argument, f_out, -1)
 
         def load(self):
-            print('\t--> Loading training arguments from file: current_training_arguments.pkl')
-            fname = os.path.join(self.argument.mdpath, 'current_training_arguments.pkl')
+            print(
+                '\t--> Loading training arguments from file: current_training_arguments.pkl')
+            fname = os.path.join(self.argument.mdpath,
+                                 'current_training_arguments.pkl')
             with open(fname, 'rb') as f_in:
                 data = pkl.load(f_in)
             return data
@@ -513,5 +465,4 @@ if __name__ == '__main__':
     print(__doc__)
     # dataset types: syn_ds, meta_ds, gold_ds
     # metagenomic dataset =418; golden dataset =63
-    # Set nEpochs=10 or high and nBatches=1 if grid search is enabled
     parseCommandLine()
