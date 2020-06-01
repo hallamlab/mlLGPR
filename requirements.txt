@@ -1,4 +1,3 @@
-logging
 numpy
 scipy
 sklearn
