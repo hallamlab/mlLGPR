@@ -43,7 +43,7 @@ where
 
 ## Citing
 If you find *mlLGPR* useful in your research, please consider citing the following paper:
-- M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway inference using multi-label classification with rich pathway features."](https://www.biorxiv.org/content/10.1101/2020.02.02.919944v1.abstract)**, bioRxiv (2020).
+- M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway inference using multi-label classification with rich pathway features."](https://doi.org/10.1101/2020.02.02.919944)**, bioRxiv (2020).
 
 ## Contact
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
