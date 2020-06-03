@@ -18,6 +18,7 @@ try:
 except:
     import pickle as pkl
 
+EPSILON = np.finfo(np.float).eps
 
 def LoadItemFeatures(fname, components=True):
     try:
@@ -148,18 +149,10 @@ def ExtractLabels(dataId, useAllLabels, nSample, fName, datasetPath):
     return classLabelsIds, classlabels
 
 
-def PrepareDataset(dataId, fObject, nSample, useAllLabels=False, trainSize=0.8, valSize=0.2, datasetPath=''):
-    ### Consider using this:
-    # from sklearn.model_selection import StratifiedKFold
-    # from skmultilearn.problem_transform import LabelPowerset
-    # skf = StratifiedKFold(n_splits=2, random_state=None, shuffle=True)
-    # lp = LabelPowerset()
-    # idx = [(o, k) for o, k in
-    #        skf.split(X=featureMatNonItem, y=lp.transform(self.mlb.fit_transform(y)))]
-
-    fName = fObject + '_' + str(nSample)
-    X = os.path.join(datasetPath, fName + '_X.pkl')
-    y = os.path.join(datasetPath, fName + '_y.pkl')
+def PrepareDataset(dataId, useAllLabels=False, trainSize=0.8, valSize=0.2, datasetPath='', 
+                   X_name = "synset_X.pkl" , y_name = "synset_y.pkl", file_name="synset"):
+    X = os.path.join(datasetPath, X_name)
+    y = os.path.join(datasetPath, y_name)
     classLabelsIds = OrderedDict()
     labels = OrderedDict()
     classlabels = list()
@@ -226,7 +219,7 @@ def PrepareDataset(dataId, fObject, nSample, useAllLabels=False, trainSize=0.8, 
 
     ## X training set and y label set
     fileDesc = '# The training set is stored as X\n'
-    XtrainFile = fName + '_Xtrain' + '.pkl'
+    XtrainFile = file_name + '_Xtrain' + '.pkl'
     SaveData(data=fileDesc, fname=XtrainFile, savepath=datasetPath, tag='X training samples', mode='w+b')
     SaveData(data=('nTotalSamples', len(trainSamples),
                    'nTotalComponents', nTotalComponents,
@@ -235,12 +228,12 @@ def PrepareDataset(dataId, fObject, nSample, useAllLabels=False, trainSize=0.8, 
                    'nTotalClassEvidenceFeatures', nTotalClassEvidenceFeatures),
              fname=XtrainFile, savepath=datasetPath, mode='a+b', printTag=False)
     fileDesc = '# This file stores the labels of the training set as (y, ids)\n'
-    ytrainFile = fName + '_ytrain' + '.pkl'
+    ytrainFile = file_name + '_ytrain' + '.pkl'
     SaveData(data=fileDesc, fname=ytrainFile, savepath=datasetPath, tag='y training samples', mode='w+b')
 
     ## X development set and y label set
     fileDesc = '# The development set is stored as X\n'
-    XdevFile = fName + '_Xdev' + '.pkl'
+    XdevFile = file_name + '_Xdev' + '.pkl'
     SaveData(data=fileDesc, fname=XdevFile, savepath=datasetPath, tag='X development samples', mode='w+b')
     SaveData(data=('nTotalSamples', len(devSamples),
                    'nTotalComponents', nTotalComponents,
@@ -249,12 +242,12 @@ def PrepareDataset(dataId, fObject, nSample, useAllLabels=False, trainSize=0.8, 
                    'nTotalClassEvidenceFeatures', nTotalClassEvidenceFeatures),
              fname=XdevFile, savepath=datasetPath, mode='a+b', printTag=False)
     fileDesc = '# This file stores the labels of the development set as (y, ids)\n'
-    ydevFile = fName + '_ydev' + '.pkl'
+    ydevFile = file_name + '_ydev' + '.pkl'
     SaveData(data=fileDesc, fname=ydevFile, savepath=datasetPath, tag='y development samples', mode='w+b')
 
     ## X test set and y label set
     fileDesc = '# The test set is stored as X\n'
-    XtestFile = fName + '_Xtest' + '.pkl'
+    XtestFile = file_name + '_Xtest' + '.pkl'
     SaveData(data=fileDesc, fname=XtestFile, savepath=datasetPath, tag='X test samples', mode='w+b')
     SaveData(data=('nTotalSamples', len(testSamples),
                    'nTotalComponents', nTotalComponents,
@@ -263,7 +256,7 @@ def PrepareDataset(dataId, fObject, nSample, useAllLabels=False, trainSize=0.8, 
                    'nTotalClassEvidenceFeatures', nTotalClassEvidenceFeatures),
              fname=XtestFile, savepath=datasetPath, mode='a+b', printTag=False)
     fileDesc = '# This file stores the labels of the test set as (y, ids)\n'
-    ytestFile = fName + '_ytest' + '.pkl'
+    ytestFile = file_name + '_ytest' + '.pkl'
     SaveData(data=fileDesc, fname=ytestFile, savepath=datasetPath, tag='y test samples', mode='w+b')
 
     with open(X, 'rb') as f_in:
@@ -385,7 +378,7 @@ def ComputePathwayAbundance(X_file, labelsComponentsFile, classLabelsIds, mlbCla
                 refLabel = labelsComponents[classLabelsIds[classLabel], :]
                 tmp = np.copy(compFeature)
                 compFeature[:, np.where(refLabel == 0)[0]] = 0
-                preAbun = np.divide(compFeature, refLabel)
+                preAbun = np.divide(compFeature, refLabel + EPSILON)
                 np.nan_to_num(preAbun, copy=False)
                 exp2labelsAbun[pred_idx:pred_idx + final_idx, classIdx] = np.sum(preAbun, axis=1)
                 compFeature = np.copy(tmp)

@@ -20,40 +20,24 @@ try:
     import cPickle as pkl
 except:
     import pickle as pkl
+np.seterr(over='ignore', divide='ignore', invalid='ignore')
 
 
 class mlLGPR(object):
-    def __init__(self, classes, classLabelsIds, labelsComponentsFile, itemPrintFeaturesFile=None,
-                 n_components=2000, scaleFeature=True, sMethod='normalizer',
-                 binarizeAbundance=True, useReacEvidenceFeatures=True, useItemEvidenceFeatures=True,
+    def __init__(self, classes, classLabelsIds, labelsComponentsFile, binarizeAbundance=True, 
+                 useReacEvidenceFeatures=True, useItemEvidenceFeatures=True,
                  usePossibleClassFeatures=False, useLabelComponentFeatures=False, nTotalComponents=0,
                  nTotalClassLabels=0, nTotalEvidenceFeatures=0, nTotalClassEvidenceFeatures=0, penalty='elasticnet',
-                 coef_similarity_type="sw", alpha=0.0001, l1_ratio=0.65, sigma=2, fit_intercept=True, 
-                 max_inner_iter=1000, nEpochs=5, nBatches=10, testInterval=2, shuffle=True, adaptive_beta=0.45,
-                 threshold=0.5, learning_rate="optimal", random_state=None, n_jobs=-1):
+                 coef_similarity_type="sw", alpha=0.0001, l1_ratio=0.65, max_inner_iter=1000, nEpochs=5, 
+                 nBatches=10, testInterval=2, adaptive_beta=0.45, threshold=0.5, n_jobs=-1):
 
-        np.random.seed(seed=random_state)
+        np.random.seed(seed=12345)
         self.mlb = preprocessing.MultiLabelBinarizer(classes=tuple(classes))
         self.classes = classes
         self.classLabelsIds = classLabelsIds
         self.classLabelsIdx = ReverseIdx(classLabelsIds)
-        self.scaleFeature = scaleFeature
         self.binarizeAbundance = binarizeAbundance
-        self.nComponentsForRMethods = n_components
-        sMethods = {'minmax': preprocessing.MinMaxScaler(feature_range=(0, 1), copy=False),
-                    'maxabs': preprocessing.MaxAbsScaler(copy=False),
-                    'standard': preprocessing.StandardScaler(with_mean=True, with_std=True, copy=False),
-                    'robust': preprocessing.RobustScaler(with_centering=True, with_scaling=True,
-                                                         quantile_range=(25.0, 75.0), copy=False),
-                    'normalizer': preprocessing.Normalizer(norm='l2', copy=False)}
-        if sMethod.lower() not in sMethods:
-            raise Exception("The scaler is not recognized. Please provide either: "
-                            "minmax, maxabs, standard, robust, or normalizer.")
-        else:
-            self.scalerMethod = sMethods[sMethod.lower()]
-
         self.labelsComponentsFile = labelsComponentsFile
-        self.itemPrintFeaturesFile = itemPrintFeaturesFile
         self.useReacEvidenceFeatures = useReacEvidenceFeatures
         self.usePossibleClassFeatures = usePossibleClassFeatures
         self.useLabelComponentFeatures = useLabelComponentFeatures
@@ -66,40 +50,26 @@ class mlLGPR(object):
         self.penalty = penalty
         self.coef_similarity_type = coef_similarity_type
         self.alpha = alpha
-        self.sigma = sigma
-        self.fit_intercept = fit_intercept
         self.max_inner_iter = max_inner_iter
         self.nEpochs = nEpochs
         self.nBatches = nBatches
         self.testInterval = testInterval
-        self.shuffle = shuffle
         self.adaptive_beta = adaptive_beta
         self.threshold = threshold
-        self.learning_rate = learning_rate
-        self.random_state = random_state
         self.n_jobs = n_jobs
         self.l1_ratio = l1_ratio
         self.l2_ratio = 0.
 
         self.estimator = SGDClassifier(loss='log', penalty=self.penalty, alpha=alpha,
-                                       l1_ratio=l1_ratio, fit_intercept=self.fit_intercept,
+                                       l1_ratio=l1_ratio, fit_intercept=True,
                                        max_iter=self.max_inner_iter, shuffle=True, n_jobs=self.n_jobs,
-                                       random_state=self.random_state, warm_start=True, average=True)
+                                       warm_start=True, average=True)
         self.is_fit = False
         self.params = list()
         warnings.filterwarnings("ignore", category=Warning)
 
     def print_arguments(self):
-
-        useitemPrintFeatures = True
-
-        if self.itemPrintFeaturesFile is None:
-            useitemPrintFeatures = False
-
-        args = ['No. of Components for Reduction Method: {0}'.format(self.nComponentsForRMethods),
-                'Scale Feature: {0}'.format(
-                    self.scaleFeature), 'Scaling Method: {0}'.format(self.scalerMethod),
-                'Binarize Abundance: {0}'.format(self.binarizeAbundance),
+        args = ['Binarize Abundance: {0}'.format(self.binarizeAbundance),
                 'Use Evidence Features: {0}'.format(
                     self.useReacEvidenceFeatures),
                 'Use Item Evidence Features: {0}'.format(
@@ -108,7 +78,6 @@ class mlLGPR(object):
                     self.usePossibleClassFeatures),
                 'Use Labels Components Features: {0}'.format(
                     self.useLabelComponentFeatures),
-                'Use Item Print Features: {0}'.format(useitemPrintFeatures),
                 'Number of Components: {0}'.format(self.nTotalComponents),
                 'Number of Labels: {0}'.format(self.nTotalClassLabels),
                 'Number of Evidence Features: {0}'.format(
@@ -117,8 +86,6 @@ class mlLGPR(object):
                     self.nPossibleClassFeatures),
                 'Number of Label Evidence Features: {0}'.format(
                     self.nTotalClassEvidenceFeatures),
-                'Adjust Parameter using Similarity Matrix: {0}'.format(
-                    self.adjustCoef),
                 'Maximum number of Iterations of the Optimization Algorithm: {0}'.format(
                     self.max_inner_iter),
                 'Maximum number of Epochs: {0}'.format(self.nEpochs),
@@ -127,14 +94,12 @@ class mlLGPR(object):
                     self.adaptive_beta),
                 'A User Cut-Off Threshold: {0}'.format(self.threshold),
                 'Display Interval: {0}'.format(self.testInterval),
-                'Learning Rate: {0}'.format(self.learning_rate),
                 'Hyperparameter to Control the Strength of Regularization: {0}'.format(
                     self.alpha),
                 'Hyperparameter to Compromise between L1 and L2 Penalty: {0}'.format(
                     self.l1_ratio),
                 'Hyperparameter to Compromise between L2 and Laplacian Penalty: {0}'.format(
                     self.l2_ratio),
-                'Use Grid Search CV: {0}'.format(self.grid),
                 'Number of CPU cores: {0}'.format(self.n_jobs)]
         args = [str(item[0] + 1) + '. ' + item[1]
                 for item in zip(list(range(len(args))), args)]
@@ -167,7 +132,7 @@ class mlLGPR(object):
             lloss = log_loss(y_true, y_pred, normalize=False)
         return lloss
 
-    def _transformFeatures(self, classLabel, featureNonItem, itemEvidenceFeaturesSize, itemFeatures, labelsComponents,
+    def _transformFeatures(self, classLabel, featureNonItem, itemEvidenceFeaturesSize, labelsComponents,
                            notClassLabel=None, y_this_class=None, fit=False):
         posIDX = list()
         negIDX = list()
@@ -182,29 +147,6 @@ class mlLGPR(object):
             idx = self.classLabelsIds[classLabel]
             X = np.hstack(
                 (X, featureNonItem[:, idx:idx + itemEvidenceFeaturesSize]))
-        if self.itemPrintFeaturesFile is not None:
-            newShape = (X.shape[0], itemFeatures.shape[1])
-            X = np.hstack((X, np.zeros(shape=newShape)))
-            tmp = itemFeatures[self.classLabelsIds[classLabel]]
-            tmp = np.reshape(tmp, (1, tmp.shape[0]))
-            if self.scaleFeature:
-                self.scalerMethod.fit_transform(tmp)
-            if fit:
-                posIDX = np.argwhere(np.array(y_this_class) == 1)[:, 0]
-                tmp = np.tile(tmp, (len(posIDX), 1))
-                X[posIDX, -itemFeatures.shape[1]:] = tmp
-
-                # Create negative samples
-                negIDX = np.argwhere(np.array(y_this_class) == 0)[:, 0]
-                fLabels = np.random.choice(a=notClassLabel, size=len(negIDX))
-                fIFeature = itemFeatures[[
-                    self.classLabelsIds[label] for label in fLabels]]
-                if self.scaleFeature:
-                    self.scalerMethod.fit_transform(fIFeature)
-                X[negIDX, -itemFeatures.shape[1]:] = fIFeature
-            else:
-                tmp = np.tile(tmp, (X.shape[0], 1))
-                X = np.hstack((X, tmp))
         if self.useLabelComponentFeatures:
             newShape = (X.shape[0], labelsComponents.shape[1])
             X = np.hstack((X, np.zeros(shape=newShape)))
@@ -228,18 +170,11 @@ class mlLGPR(object):
                 X[negIDX, -labelsComponents.shape[1]:] = fComponents
             else:
                 tmp = np.tile(tmp, (X.shape[0], 1))
-                tmp = np.int8(np.logical_and(
-                    X[0, : self.nTotalComponents], tmp))
-                X = np.hstack((X, tmp))
-        if self.scaleFeature and self.useReacEvidenceFeatures:
-            startIdx = self.nTotalComponents
-            lastIdx = self.nTotalComponents + \
-                self.nReacEvidenceFeatures - self.nTotalClassLabels * 2
-            self.scalerMethod.fit_transform(X[:, startIdx:lastIdx])
+                tmp = np.int8(np.logical_and(X[0, : self.nTotalComponents], tmp))
+                X[:, -labelsComponents.shape[1]:] = tmp
         return X
 
-    def _fit(self, label, featureNonItem, itemFeatures, labelsComponents,
-             itemEvidenceFeaturesSize):
+    def _fit(self, label, featureNonItem, labelsComponents, itemEvidenceFeaturesSize):
         for classIdx, classLabel in enumerate(self.mlb.classes):
             notClassLabel = [
                 c for c in self.mlb.classes if c not in classLabel]
@@ -254,7 +189,7 @@ class mlLGPR(object):
             if len(np.unique(y)) < 2:
                 continue
 
-            X = self._transformFeatures(classLabel, featureNonItem, itemEvidenceFeaturesSize, itemFeatures,
+            X = self._transformFeatures(classLabel, featureNonItem, itemEvidenceFeaturesSize, 
                                         labelsComponents, notClassLabel, y, fit=True)
             if len(np.unique(y)) == 2:
                 print(
@@ -268,10 +203,10 @@ class mlLGPR(object):
                 self.coef[classIdx] = self.estimator.coef_[0]
                 self.intercept[classIdx] = self.estimator.intercept_
 
-    def fit(self, X_file, y_file, XdevFile=None, ydevFile=None, subSample=True, subSampleShuffle=True,
-            subsampleSize=0.1, savename='mllg', savepath=''):
+    def fit(self, X_file, y_file, XdevFile=None, ydevFile=None, savepath=''):
 
         oldCost = np.inf
+        savename='mlLGPR'
         if self.l1_ratio == 1:
             savename = savename + '_l1_ab'
         elif self.l1_ratio == 0:
@@ -300,15 +235,6 @@ class mlLGPR(object):
         else:
             possibleItemsFeaturesSize = 0
 
-        if self.itemPrintFeaturesFile is not None:
-            itemFeatures = LoadItemFeatures(
-                fname=self.itemPrintFeaturesFile, components=False)
-            itemPrintFeaturesSize = itemFeatures.shape[1]
-            savename = savename + '_pf'
-        else:
-            itemFeatures = None
-            itemPrintFeaturesSize = 0
-
         if self.useLabelComponentFeatures:
             labelsComponents = LoadItemFeatures(
                 fname=self.labelsComponentsFile)
@@ -322,29 +248,22 @@ class mlLGPR(object):
         savename = savename + '.pkl'
         fName = os.path.join(savepath, savename)
         totalUsedXSize = compFeaturesSize + reacEvidFeaturesSize + itemEvidFeaturesSize + possibleItemsFeaturesSize + \
-            + labelCompSize + itemPrintFeaturesSize
+            + labelCompSize
 
-        featureSizeforX = compFeaturesSize + self.nReacEvidenceFeatures + \
-            self.nPossibleClassFeatures + self.nTotalClassEvidenceFeatures
+        featureSizeforX = compFeaturesSize + self.nReacEvidenceFeatures + self.nPossibleClassFeatures + self.nTotalClassEvidenceFeatures
 
         # Set hyper-paramters
         alpha = self.alpha
         lam = self.l1_ratio
-        sigma = self.sigma
 
         if type(alpha) is not np.ndarray:
             alpha = [alpha]
         if type(lam) is not np.ndarray:
             lam = [lam]
-        if type(sigma) is not np.ndarray:
-            sigma = [sigma]
-        self.params = [{'alpha': a, 'lam': l1, 'sigma': s} for a in alpha
-                       for l1 in lam for s in sigma]
+        self.params = [{'alpha': a, 'lam': l1} for a in alpha
+                       for l1 in lam]
         for pidx, param in enumerate(self.params):
             params_sgd = {"alpha": param['alpha'], "l1_ratio": param['lam']}
-            if self.adjustCoef:
-                params_sgd = {"alpha": param['alpha']
-                              * 1 / param['lam'], "l1_ratio": 0}
             self.estimator.set_params(**params_sgd)
 
             # Initialize coefficients
@@ -367,20 +286,18 @@ class mlLGPR(object):
                                     nTrainSamples))
                                 break
                         for batch in np.arange(self.nBatches):
-                            y_file = list()
+                            y = list()
                             start_idx = 0
                             batch_timeref = time.time()
                             if batch == self.nBatches - 1:
                                 batchsize = nTrainSamples - (batch * batchsize)
                             final_idx = start_idx + batchsize
-                            featureMatNonItem = np.empty(
-                                shape=(batchsize, featureSizeforX))
+                            featureMatNonItem = np.empty(shape=(batchsize, featureSizeforX))
                             while start_idx < final_idx:
                                 try:
                                     tmp = pkl.load(f_x_in)
                                     if type(tmp) is np.ndarray:
-                                        featureMatNonItem[start_idx] = np.reshape(
-                                            tmp, (tmp.shape[1],))
+                                        featureMatNonItem[start_idx] = np.reshape(tmp, (tmp.shape[1],))
                                         start_idx += 1
                                     else:
                                         continue
@@ -392,21 +309,12 @@ class mlLGPR(object):
                                 try:
                                     tmp = pkl.load(f_y_in)
                                     if type(tmp) is tuple:
-                                        y_file.append(tmp[0])
+                                        y.append(tmp[0])
                                         start_idx += 1
                                 except IOError:
                                     break
 
-                            if subSample:
-                                # Try to add Nestrom based subsampling approach
-                                featureMatNonItem, _, y_file, _ = train_test_split(featureMatNonItem, y_file,
-                                                                                   shuffle=subSampleShuffle,
-                                                                                   train_size=subsampleSize,
-                                                                                   random_state=12345)
-                                print('\t\t## Applied subsampled size {0:d} samples'.format(
-                                    featureMatNonItem.shape[0]))
-                            else:
-                                print(
+                            print(
                                     '\t\t  ### Learning from {2:d} samples for the batch count {0:d} (out of {1:d})...'.format(
                                         batch + 1,
                                         self.nBatches,
@@ -415,8 +323,9 @@ class mlLGPR(object):
                             if self.binarizeAbundance:
                                 preprocessing.binarize(
                                     featureMatNonItem[:, :self.nTotalComponents], copy=False)
-                            self._fit(label=y_file, featureNonItem=featureMatNonItem, itemFeatures=itemFeatures,
-                                      labelsComponents=labelsComponents, itemEvidenceFeaturesSize=itemEvidFeaturesSize)
+                            self._fit(label=y, featureNonItem=featureMatNonItem, 
+                                      labelsComponents=labelsComponents, 
+                                      itemEvidenceFeaturesSize=itemEvidFeaturesSize)
                             print('\t\t\t--> Batch {0} consumed {1} seconds...'.format(batch + 1,
                                                                                        round(
                                                                                            time.time() - batch_timeref,
@@ -426,8 +335,7 @@ class mlLGPR(object):
                     epoch + 1, round(time.time() - epoch_timeref, 3)))
                 if (epoch % self.testInterval) == 0 or epoch == 0 or epoch + 1 == self.nEpochs:
                     print('\t\t## Evaluating performance...')
-                    newCost = self._cost(
-                        X_file=XdevFile, y_file=ydevFile, forTraining=True)
+                    newCost = self._cost(X_file=XdevFile, y_file=ydevFile, forTraining=True)
                     print(
                         '\t\t\t--> New cost: {0:.4f}; Old cost: {1:.4f}'.format(newCost, oldCost))
                     if newCost < oldCost:
@@ -470,21 +378,14 @@ class mlLGPR(object):
         else:
             itemEvidenceFeaturesSize = 0
 
-        if self.itemPrintFeaturesFile is not None:
-            itemFeatures = LoadItemFeatures(
-                fname=self.itemPrintFeaturesFile, components=False)
-        else:
-            itemFeatures = None
-
         if self.useLabelComponentFeatures:
             labelsComponents = LoadItemFeatures(
                 fname=self.labelsComponentsFile)
             labelsComponents = labelsComponents[0]
         else:
             labelsComponents = None
-
-        featureSize = componentFeatures + self.nReacEvidenceFeatures + \
-            self.nPossibleClassFeatures + self.nTotalClassEvidenceFeatures
+            
+        featureSize = componentFeatures + self.nReacEvidenceFeatures + self.nPossibleClassFeatures + self.nTotalClassEvidenceFeatures
 
         with open(X_file, 'rb') as f_in:
             while True:
@@ -527,8 +428,8 @@ class mlLGPR(object):
                         featureNoItem[:, : self.nTotalComponents], copy=False)
 
                 for classIdx, classLabel in enumerate(self.mlb.classes):
-                    X = self._transformFeatures(classLabel, featureNoItem, itemEvidenceFeaturesSize,
-                                                itemFeatures, labelsComponents, fit=False)
+                    X = self._transformFeatures(classLabel, featureNoItem, itemEvidenceFeaturesSize, 
+                                                labelsComponents, fit=False)
                     _, y_hat = self._predict(X=X, classIdx=classIdx)
                     y_pred[pred_idx:pred_idx + final_idx, classIdx] = y_hat
                 pred_idx += final_idx

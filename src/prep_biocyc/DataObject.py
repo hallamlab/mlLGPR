@@ -173,6 +173,7 @@ class DataObject(object):
 
         lst_ipaths = [os.path.join(folderPath, folder) for folder in os.listdir(folderPath)
                       if not folder.startswith('.')]
+        lst_ipaths = [f for f in lst_ipaths if os.path.isdir(f)]
 
         print('\t>> Extracting input information from {0} files...'.format(len(lst_ipaths)))
 
@@ -425,20 +426,9 @@ class DataObject(object):
         return ecMatrix
 
     def BuildFeaturesMatrix(self, X, matrixList, colIDx, provided_lst=None, featuresList=[42, 68, 32], rxnPosition=3,
-                            ptwPosition=4, displayInterval=50, kb='metacyc', constructRxn=False, XName='X',
+                            ptwPosition=4, displayInterval=50, kb='metacyc', constructRxn=False, XName='X.pkl',
                             savepath='.'):
-        '''
-
-        :param matrixList:
-        :param X:
-        :param provided_lst:
-        :param ptwPosition:
-        :param kb:
-        :return:
-        '''
-        print('\t>> Building features from input data: {0}'.format(XName + '_Xm.pkl'))
-        XName = XName + '_X.pkl'
-
+        print('\t>> Building features from input data: {0}'.format(XName))
         if constructRxn:
             if provided_lst is None:
                 idx_lst = self.reaction_id
@@ -461,8 +451,7 @@ class DataObject(object):
 
         fileDesc = '# This file represents the extracted features (X) with abundances...'
         self.SaveData(data=fileDesc, fname=XName, savepath=savepath, tag='the extracted features', mode='w+b')
-        self.SaveData(
-            data=('nTotalSamples', X.shape[0], 'nTotalComponents', X.shape[1], 'nTotalClassLabels', len(idx_lst),
+        self.SaveData(data=('nTotalSamples', X.shape[0], 'nTotalComponents', X.shape[1], 'nTotalClassLabels', len(idx_lst),
                   'nEvidenceFeatures', featuresList[1] + 2 * len(idx_lst),
                   'nTotalClassEvidenceFeatures', featuresList[2] * len(idx_lst)),
             fname=XName, savepath=savepath, mode='a+b', printTag=False)
@@ -631,16 +620,6 @@ class DataObject(object):
         This function creates a binary indicator (or adjacency) matrix given a list of
         row-wise data and a list of column-wise data. The function has following
         arguments:
-        :param addNoise:
-        :param displayInterval:
-        :param savepath:
-        :param tag:
-        :param nItems_per_sample:
-        :param saveToh5py:
-        :param fName:
-        :param nSamples:
-        :param provided_lst:
-        :param ptw_constraint:
         :type rowDataMatrix: scipy.sparse.lil_matrix
         :param rowDataMatrix: a sparse binary indicator matrix where each row define
             a reaction (or pathway) with columns representing its associated genes
@@ -670,7 +649,7 @@ class DataObject(object):
             pathway per each true pathway
         '''
 
-        fName = fName + '_' + str(nSamples) + '.pkl'
+        fName = fName + '_' + str(nSamples) + '_X.pkl'
 
         if addNoise:
             print('\t>> The following settings are used for constructing the corpora:'
@@ -778,7 +757,7 @@ class DataObject(object):
                 itemInfoByKB.append([ptw for ptw in self.processedKB[ds][4].pathway_info if ptw in item_id_lst])
 
         print('\t>> Constructing golden dataset...')
-        fName = fName + '_' + str(nSamples) + '.pkl'
+        fName = fName + '_' + str(nSamples) + '_X.pkl'
         fileDesc = '# Golden dataset is stored in this format: sample index, list of data components, list of labels'
         self.SaveData(data=fileDesc, fname=fName, savepath=savepath, tag='golden dataset', mode='w+b')
 
@@ -809,20 +788,8 @@ class DataObject(object):
 
     def FormatCuratedDataset(self, nSamples, rowDataMatrix, colIDx, useEC=True, constructRxn=False,
                              pathologicInput=False, minpathDataset=True, minpathMapFile=True, mapAll=False,
-                             fName='syn_dataset_ptw_ec.pkl', loadpath='.'):
-        '''
-
-        :param pathologicInput:
-        :param minpathMapFile:
-        :param nSamples:
-        :param fName:
-        :param loadpath:
-        :param useEC:
-        :param binarize:
-        :return:
-        '''
-
-        file = fName + '_' + str(nSamples) + '.pkl'
+                             fName='synset.pkl', loadpath='.'):
+        file = fName + '_' + str(nSamples) + '_X.pkl'
         X = np.zeros((nSamples, len(colIDx)), dtype=np.int32)
         y = np.empty((nSamples,), dtype=np.object)
 
