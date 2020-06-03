@@ -16,7 +16,7 @@ Basically, *mlLGPR* requires following packages:
 - [fuzzywuzzy](https://pypi.org/project/fuzzywuzzy/) (==0.18)
 
 ## Experimental Objects and Test Samples
-Please download the following files from [Zenodo](https://zenodo.org/deposit/3821137). 
+Please download the following files from [Zenodo](https://zenodo.org/record/3821137#.XtdZ4zdKjeQ). 
 - The link contains the following preprocessed files:
     - "object.pkl": an object containing the preprocessed seven databases (MetaCyc, AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc).
     - "pathway_ec.pkl": an object containing Pathway-EC associations.
@@ -51,7 +51,7 @@ To preprocess data, we provided a few examples.
 
 The description about arguments in the following examples are: *--load-object*: a true/false variable indicating whether to enable parsing PGDBs, *--build-syn-dataset*: a true/false variable suggesting whether to generate simulated data, *--add-noise*: a true/false variable indicating whether to add noise during synthetic samples curation, *--nSample*: an integer variable corresponding the number of samples to generate (e.g. 10), *--average-item-per-sample*: an integer variable corresponding the expected pathway size for each generated instance (e.g. 100), *--ncomponents-to-corrupt*: an integer variable corresponding the number of true ECs to be corrupted for each pathway (e.g. 2), *--lower-bound-nitem-ptw*: indicates to refrain corrupting pathways that have ECs less than this threshold (e.g. 1), *--ncomponents-to-corrupt-outside*: an integer variable corresponding the number of false ECs to be inserted during synthetic samples generation  (e.g. 2), *--objectname*: is the name of the file that contains all necessary information obtained from PGDBs (e.g. "object.pkl"), *--pathwayfeature*: is the file name that stores the properties of pathways (e.g. "pathwayfeature.pkl"), *--ecfeature*: is the file name that stores the properties of ECs (e.g. "ecfeature.pkl"), *--pathway-ec*: is the file name that stores pathway to EC mapping information (e.g. "pathway_ec.pkl"), *--ospath*: is the location to the directory containing various object files, *--dspath*: is the location to the dataset folder, and *--kbpath*: is the location to the folder containing the flat-files of PGDBs.
 
-If PGDBs were not provided, then skip the example 1. The remaining examples can be executed using files provided in zenodo. 
+If PGDBs were not provided, then skip the example 1. The remaining examples can be executed using files provided in [Zenodo](https://zenodo.org/record/3821137#.XtdZ4zdKjeQ). 
 
 #### Example 1
 To preprocess PGDBs, execute the following command:
@@ -63,7 +63,7 @@ Several files will be generated (object.pkl, pathwayfeature.pkl, ecfeature.pkl, 
 **NOTE** you need to download PGDBs from [biocyc](https://biocyc.org/).
 
 #### Example 2
-In cases where you were not able to obtain PGDBs, you can still run all the below examples using files provided in [Zenodo](https://zenodo.org/deposit/3821137). Please download the files. For example, if you want to generate noisy samples using **--build-syn-dataset** and **adding noise** arguments, execute the following command:
+In cases where you were not able to obtain PGDBs, you can still run all the below examples using files provided in [Zenodo](https://zenodo.org/record/3821137#.XtdZ4zdKjeQ). Please download the files. For example, if you want to generate noisy samples using **--build-syn-dataset** and **adding noise** arguments, execute the following command:
 
 ``python main.py --biocyc --build-syn-dataset --add-noise --nSample 10 --average-item-per-sample 100 --ncomponents-to-corrupt 2 --lower-bound-nitem-ptw 1 --ncomponents-to-corrupt-outside 2 --objectname "object.pkl" --pathway-ec "pathway_ec.pkl" --ecfeature "ecfeature.pkl" --ospath "[path to object files]" --dspath "[path to folder containing datasets]"``
 
@@ -103,7 +103,7 @@ To train data, we provided a few examples.
 
 The description about arguments in the following examples are: *--load-prepared-dataset*: a true/false variable indicating whether to load datasets after applying stratified sampling approach, *--train-size*: a real number variable in [0.0, 1.0] indicating the training size, *--val-size*: a real number variable in [0.0, 1.0] indicating the validation size, *--binarize*: a true/false variable indicating whether to binarize data (set feature values to 0 or 1), *--penalty*: is the preferred choice of regularization (e.g. "elasticnet"), *--alpha*: is a real number variable indicating the amount of regularization to be applied (e.g. 0.0001), *--l2-ratio*: is a real number variable suggesting the elasticnet mixing parameter, with 0 <= l2_ratio <= 1 (e.g.  0.65), *--objectname*: is the name of the file that contains all necessary information obtained from PGDBs (e.g. "object.pkl"), *--X-name*: is the input file name (e.g. "synset_50_X.pkl"), *--y-name*: is the output file name (e.g. "synset_50_y.pkl"), *--file-name*: is the file name corresponding the training, validation, test datasets, *--usePossibleClassFeatures*: a true/false variable indicating whether to apply possible pathway features (PP) in training, *--useLabelComponentFeatures*: a true/false variable indicating whether to apply pathway to ec common mapping features (PC) in training, *--ospath*: is the location to the directory containing various object files, *--dspath*: is the location to the dataset folder, *--mdpath*: is the location to the folder containing the trained model, *--n-jobs*: an integer variable corresponding the number of CPU cores to be consumed for training or prediction (e.g. 1), *--nEpochs*: an integer variable corresponding the number of epochs to train mlLGPR (e.g. 3), and *--nBatches*: an integer variable corresponding the size of a single mini-batch for training/predicting mlLGPR (e.g. 1).
                         
-The following examples can be executed using files provided in zenodo. 
+The following examples can be executed using files provided in [Zenodo](https://zenodo.org/record/3821137#.XtdZ4zdKjeQ). 
 
 #### Example 1
 To train mlLGPR using elastic-net with **load-prepared-dataset** option, execute the following command:
@@ -148,7 +148,7 @@ To infer pathways, we provided a few examples.
 
 The description about arguments in the following examples are: *--predict*: a true/false variable indicating whether to predict sets of pathways, *--parse-input*: a true/false variable indicating whether to parse files from input in 0.pf format, *--model*: the name of the pretrained mlLGPR model (e.g. "mlLGPR_en_ab_re_pe.pkl"), *--use-tCriterion*: a true/false variable indicating whether to employ adaptive beta prediction strategy, *--adaptive-beta*: is a real number in (0,1) corresponding the adaptive beta paramter (e.g. 0.45), *--X-name*: is the input file name (e.g. "synset_parse.pkl"), *--file-name*: the name of parsed input file in a matrix format (e.g. "synset_parse"), *--predict-file*: is the name of the file to store the predicted pathways (e.g. "mlLGPR"), *--objectname*: is the name of the file that contains all necessary information obtained from PGDBs (e.g. "object.pkl"), *--ecfeature*: is the file name that stores the properties of ECs (e.g. "ecfeature.pkl"), *--pathway-ec*: is the file name that stores pathway to EC mapping information (e.g. "pathway_ec.pkl"), *--ospath*: is the location to the directory containing various object files, *--dspath*: is the location to the dataset folder, *--mdpath*: is the location to the folder containing the trained model, *--rspath*: is the location to the folder to store prediction results, *--n-jobs*: an integer variable corresponding the number of CPU cores to be consumed for training or prediction (e.g. 1), and *--nBatches*: an integer variable corresponding the size of a single mini-batch for training/predicting mlLGPR (e.g. 1).
                         
-The following examples can be executed using files provied in zenodo. 
+The following examples can be executed using files provied in [Zenodo](https://zenodo.org/record/3821137#.XtdZ4zdKjeQ). 
 
 #### Example 1
 
