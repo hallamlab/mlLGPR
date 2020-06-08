@@ -3,13 +3,12 @@ This is considered the main entry point to preprocesses
 BioCyc PGDBs and to construct samples.
 '''
 
+import numpy as np
 import os
 import os.path
 import sys
 import time
 import traceback
-
-import numpy as np
 from prep_biocyc.DataObject import DataObject
 
 try:
@@ -33,7 +32,7 @@ def _parseData(b_arg):
         objData.ExtractInfoFromDatabase(kbpath=b_arg.kbpath, dataFolder='', constraintKB='metacyc')
         objData.SaveData(data=objData, fname=b_arg.objectname,
                          savepath=b_arg.ospath, tag='the data object')
-        
+
         print(
             '\n*** CONSTRUCTING THE FOLLOWING INDICATOR (OR ADJACENCY) BINARY MATRICES...')
         print('\t>> Creating the following mapping matrices...')
@@ -60,21 +59,22 @@ def _parseData(b_arg):
 
         print('\n*** MAPPING LABELS WITH FUNCTIONS...')
         objData.MapLabelswithFunctions(rowDataMatrix=ptw_ec_spmatrix, colIDx=ptw_ec_id, y=None, nSamples=b_arg.nsample,
-                                       mapAll=True, useEC=True, constructRxn=False, fName=None, 
+                                       mapAll=True, useEC=True, constructRxn=False, fName=None,
                                        savepath=b_arg.ospath)
-        
+
         print('\n*** EXTRACTING PATHWAY PROPERTIES...', )
-        pathway_properties = objData.ExtractPathwayProperties(ptwECMatrix=ptw_ec_spmatrix, ecIDx=ptw_ec_id, nFeatures=27)
+        pathway_properties = objData.ExtractPathwayProperties(ptwECMatrix=ptw_ec_spmatrix, ecIDx=ptw_ec_id,
+                                                              nFeatures=27)
         fileDesc = '#File Description: number of pathway x number of features\n'
         objData.SaveData(data=fileDesc, fname=b_arg.pathwayfeature, savepath=b_arg.ospath,
                          tag='the pathway properties', mode='w+b')
         objData.SaveData(data=('nPathways:', str(pathway_properties.shape[0]), 'nFeatures:', str(
-                pathway_properties.shape[1])),
-            fname=b_arg.pathwayfeature, savepath=b_arg.ospath, mode='a+b', printTag=False)
+            pathway_properties.shape[1])),
+                         fname=b_arg.pathwayfeature, savepath=b_arg.ospath, mode='a+b', printTag=False)
         objData.SaveData(data=pathway_properties, fname=b_arg.pathwayfeature, savepath=b_arg.ospath,
                          mode='a+b', printTag=False)
         del pathway_properties
-        
+
         print('\n*** EXTRACTING REACTION (EC) PROPERTIES...', )
         ec_properties = objData.ExtractReactionProperties(ptwECMatrix=ptw_ec_spmatrix, rxnECMatrix=rxn_ec_spmatrix,
                                                           pECIDx=ptw_ec_id, rECIDx=rxn_ec_id,
@@ -138,7 +138,7 @@ def _parseData(b_arg):
                                    displayInterval=b_arg.display_interval, constructRxn=False,
                                    constraint_kb='metacyc', fName='golden', savepath=b_arg.dspath)
         X = objData.FormatCuratedDataset(nSamples=nSamples, rowDataMatrix=ptw_ec_spmatrix, colIDx=ptw_ec_id,
-                                         useEC=True, constructRxn=False, pathologicInput=False, 
+                                         useEC=True, constructRxn=False, pathologicInput=False,
                                          minpathDataset=False, minpathMapFile=False, fName='golden',
                                          loadpath=b_arg.dspath)
 
@@ -174,7 +174,8 @@ def BioCycMain(b_arg):
     try:
         timeref = time.time()
         _parseData(b_arg)
-        print('\n*** THE PREPROCESSING CONSUMED {0:f} SECONDS\n'.format(round(time.time() - timeref, 3)), file=sys.stderr)
+        print('\n*** THE PREPROCESSING CONSUMED {0:f} SECONDS\n'.format(round(time.time() - timeref, 3)),
+              file=sys.stderr)
     except Exception:
         print(traceback.print_exc())
         raise

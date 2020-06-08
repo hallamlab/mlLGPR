@@ -16,6 +16,7 @@ logistic regression train.
 
 import os
 from argparse import ArgumentParser
+
 try:
     import cPickle as pkl
 except:
@@ -60,7 +61,7 @@ def internalArgs(parse_args):
     ##########################################################################################################
     ##########                  ARGUMENTS USED FOR CONSTRUCTING SYNTHETIC DATASET                   ##########
     ##########################################################################################################
-    
+
     if parse_args.load_object:
         arg.save_builddata_kb = False
     else:
@@ -252,7 +253,7 @@ def parseCommandLine():
                         help='The size of a single mini-batch for training/predicting mlLGPR. (default value: 1)')
     parser.add_argument('--test-interval', default=2, type=int,
                         help='How often to test mlLGPR\'s performance. (default value: 2)')
-        
+
     ##########################################################################################################
     ##########                               ARGUMENTS FOR USABILITY                                ##########
     ##########################################################################################################

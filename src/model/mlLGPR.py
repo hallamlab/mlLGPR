@@ -2,12 +2,11 @@
 This file trains the metagenomics inputset using multi-label
 logistic regression.
 '''
+import numpy as np
 import os
 import time
 import traceback
 import warnings
-
-import numpy as np
 from model.mlUtility import LoadItemFeatures, LoadYFile, ReverseIdx
 from scipy.special import expit
 from sklearn import preprocessing
@@ -24,11 +23,11 @@ np.seterr(over='ignore', divide='ignore', invalid='ignore')
 
 
 class mlLGPR(object):
-    def __init__(self, classes, classLabelsIds, labelsComponentsFile, binarizeAbundance=True, 
+    def __init__(self, classes, classLabelsIds, labelsComponentsFile, binarizeAbundance=True,
                  useReacEvidenceFeatures=True, useItemEvidenceFeatures=True,
                  usePossibleClassFeatures=False, useLabelComponentFeatures=False, nTotalComponents=0,
                  nTotalClassLabels=0, nTotalEvidenceFeatures=0, nTotalClassEvidenceFeatures=0, penalty='elasticnet',
-                 coef_similarity_type="sw", alpha=0.0001, l1_ratio=0.65, max_inner_iter=1000, nEpochs=5, 
+                 coef_similarity_type="sw", alpha=0.0001, l1_ratio=0.65, max_inner_iter=1000, nEpochs=5,
                  nBatches=10, testInterval=2, adaptive_beta=0.45, threshold=0.5, n_jobs=-1):
 
         np.random.seed(seed=12345)
@@ -110,7 +109,7 @@ class mlLGPR(object):
 
     def _decision_function(self, X, classIdx):
         scores = np.dot(X, np.reshape(self.coef[classIdx], newshape=(1, self.coef[classIdx].shape[0])).T) + \
-            self.intercept[classIdx]
+                 self.intercept[classIdx]
         return scores.ravel() if scores.shape[1] == 1 else scores
 
     def _score(self, X, y, classIdx):
@@ -189,7 +188,7 @@ class mlLGPR(object):
             if len(np.unique(y)) < 2:
                 continue
 
-            X = self._transformFeatures(classLabel, featureNonItem, itemEvidenceFeaturesSize, 
+            X = self._transformFeatures(classLabel, featureNonItem, itemEvidenceFeaturesSize,
                                         labelsComponents, notClassLabel, y, fit=True)
             if len(np.unique(y)) == 2:
                 print(
@@ -206,7 +205,7 @@ class mlLGPR(object):
     def fit(self, X_file, y_file, XdevFile=None, ydevFile=None, savepath=''):
 
         oldCost = np.inf
-        savename='mlLGPR'
+        savename = 'mlLGPR'
         if self.l1_ratio == 1:
             savename = savename + '_l1_ab'
         elif self.l1_ratio == 0:
@@ -248,7 +247,7 @@ class mlLGPR(object):
         savename = savename + '.pkl'
         fName = os.path.join(savepath, savename)
         totalUsedXSize = compFeaturesSize + reacEvidFeaturesSize + itemEvidFeaturesSize + possibleItemsFeaturesSize + \
-            + labelCompSize
+                         + labelCompSize
 
         featureSizeforX = compFeaturesSize + self.nReacEvidenceFeatures + self.nPossibleClassFeatures + self.nTotalClassEvidenceFeatures
 
@@ -315,16 +314,16 @@ class mlLGPR(object):
                                     break
 
                             print(
-                                    '\t\t  ### Learning from {2:d} samples for the batch count {0:d} (out of {1:d})...'.format(
-                                        batch + 1,
-                                        self.nBatches,
-                                        batchsize))
+                                '\t\t  ### Learning from {2:d} samples for the batch count {0:d} (out of {1:d})...'.format(
+                                    batch + 1,
+                                    self.nBatches,
+                                    batchsize))
 
                             if self.binarizeAbundance:
                                 preprocessing.binarize(
                                     featureMatNonItem[:, :self.nTotalComponents], copy=False)
-                            self._fit(label=y, featureNonItem=featureMatNonItem, 
-                                      labelsComponents=labelsComponents, 
+                            self._fit(label=y, featureNonItem=featureMatNonItem,
+                                      labelsComponents=labelsComponents,
                                       itemEvidenceFeaturesSize=itemEvidFeaturesSize)
                             print('\t\t\t--> Batch {0} consumed {1} seconds...'.format(batch + 1,
                                                                                        round(
@@ -384,7 +383,7 @@ class mlLGPR(object):
             labelsComponents = labelsComponents[0]
         else:
             labelsComponents = None
-            
+
         featureSize = componentFeatures + self.nReacEvidenceFeatures + self.nPossibleClassFeatures + self.nTotalClassEvidenceFeatures
 
         with open(X_file, 'rb') as f_in:
@@ -428,7 +427,7 @@ class mlLGPR(object):
                         featureNoItem[:, : self.nTotalComponents], copy=False)
 
                 for classIdx, classLabel in enumerate(self.mlb.classes):
-                    X = self._transformFeatures(classLabel, featureNoItem, itemEvidenceFeaturesSize, 
+                    X = self._transformFeatures(classLabel, featureNoItem, itemEvidenceFeaturesSize,
                                                 labelsComponents, fit=False)
                     _, y_hat = self._predict(X=X, classIdx=classIdx)
                     y_pred[pred_idx:pred_idx + final_idx, classIdx] = y_hat

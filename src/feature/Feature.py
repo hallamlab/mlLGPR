@@ -4,12 +4,11 @@ requires various data objects obtained from BioCyc PGDBs to be
 available as inputs to designated machine learning models.
 '''
 
-import re
-from operator import itemgetter
-
 import networkx as nx
 import numpy as np
+import re
 from fuzzywuzzy import process
+from operator import itemgetter
 
 try:
     import cPickle as pkl
@@ -342,7 +341,7 @@ class Feature(object):
             mFeatures[0, 23] = np.sum(selectedList[:, 0]) / len(selectedList)
             # 24. fraction-total-distinct-pathways-over-distinct-ec (numeric)
             mFeatures[0, 24] = len(np.unique(np.concatenate(selectedList[:, 1]))) / len(selectedList)
-            
+
         if len(np.unique(np.concatenate(selectedList[:, 1]))) != 0:
             # 1. fraction-total-possible-pathways-to-distinct-pathways (numeric)
             mFeatures[0, 1] = np.sum(selectedList[:, 0]) / len(np.unique(np.concatenate(selectedList[:, 1])))
@@ -350,21 +349,22 @@ class Feature(object):
             mFeatures[0, 25] = np.sum(selectedList[:, 4]) / len(np.unique(np.concatenate(selectedList[:, 1])))
             # 27. fraction-distinct-ec-act-in-deg-or-detox-pathway-over-distinct-pathways (numeric)
             mFeatures[0, 27] = np.sum(selectedList[:, 12]) / len(np.unique(np.concatenate(selectedList[:, 1])))
-        
+
             # 30. fraction-distinct-ec-act-in-biosynthesis-pathway-over-distinct-pathways (numeric)
-            mFeatures[0, 30] = np.sum(selectedList[:, 14]) / len(np.unique(np.concatenate(selectedList[:, 1])))        
+            mFeatures[0, 30] = np.sum(selectedList[:, 14]) / len(np.unique(np.concatenate(selectedList[:, 1])))
             # 33. fraction-distinct-ec-act-in-energy-pathway-over-distinct-pathways (numeric)
             mFeatures[0, 33] = np.sum(selectedList[:, 16]) / len(np.unique(np.concatenate(selectedList[:, 1])))
             # 37. fraction-total-reactions-over-distinct-pathways (numeric)
             mFeatures[0, 37] = np.sum(selectedList[:, 18]) / len(np.unique(np.concatenate(selectedList[:, 1])))
             # 38. fraction-distinct-reaction-over-distinct-pathways (numeric)
-            mFeatures[0, 38] = len(np.unique(np.concatenate(selectedList[:, 19]))) / len(np.unique(np.concatenate(selectedList[:, 1])))
-        
+            mFeatures[0, 38] = len(np.unique(np.concatenate(selectedList[:, 19]))) / len(
+                np.unique(np.concatenate(selectedList[:, 1])))
+
         if np.sum(selectedList[:, 3]) != 0:
             # 3. fraction-total-ecs-mapped-to-pathways (numeric)
             mFeatures[0, 3] = np.sum(instance) / np.sum(selectedList[:, 3])
             # 26. fraction-ec-contributes-in-subpathway-over-total-pathways (numeric)
-            mFeatures[0, 26] = np.sum(selectedList[:, 5]) / np.sum(selectedList[:, 0])   
+            mFeatures[0, 26] = np.sum(selectedList[:, 5]) / np.sum(selectedList[:, 0])
             # 28. fraction-distinct-ec-act-in-deg-or-detox-pathway-over-total-pathways (numeric)
             mFeatures[0, 28] = np.sum(selectedList[:, 12]) / np.sum(selectedList[:, 0])
             # 29. fraction-ec-act-in-deg-or-detox-pathway-over-total-pathways (numeric)
@@ -379,7 +379,7 @@ class Feature(object):
             mFeatures[0, 35] = np.sum(selectedList[:, 17]) / np.sum(selectedList[:, 0])
             # 36. fraction-total-reactions-over-total-pathways (numeric)
             mFeatures[0, 36] = np.sum(selectedList[:, 18]) / np.sum(selectedList[:, 0])
-        
+
         if np.sum(instance) != 0:
             # 2. fraction-total-ecs-to-ecs-mapped-to-single-pathways (numeric)
             mFeatures[0, 2] = np.sum(selectedList[:, 2]) / np.sum(instance)
@@ -511,7 +511,7 @@ class Feature(object):
                 else:
                     if len(true_prev_ec_lst[:initialRxn]) != 0:
                         pathwayFeatures[pidx, 3] = len(sample_initial_ec_lst) / len(true_prev_ec_lst[:initialRxn])
-                        
+
             # 42. all-final-ecs-present-in-pathways (numeric)
             # 4.  all-final-ecs-present-in-pathway (boolean)
             # 5.  prob-final-ecs-present-in-pathway (numeric)
@@ -689,7 +689,7 @@ class Feature(object):
             # 63.  fraction-reactions-present-or-orphaned-in-pathways (numeric)
             # 27.  fraction-reactions-present-or-orphaned-in-pathway (numeric)
             sample_rxn_orphand = set.union(set(sample_ec_lst), set(orphan_ec_lst))
-            if  len(true_ec_orphand) != 0:
+            if len(true_ec_orphand) != 0:
                 mFeatures[0, 63] += len(sample_rxn_orphand) / len(true_ec_orphand)
                 pathwayFeatures[pidx, 27] = len(sample_rxn_orphand) / len(true_ec_orphand)
 
@@ -713,7 +713,7 @@ class Feature(object):
             if sample_ec_lst:
                 mFeatures[0, 67] += total
                 pathwayFeatures[pidx, 31] = total
-                if len(true_prev_ec_lst) != 0 :
+                if len(true_prev_ec_lst) != 0:
                     mFeatures[0, 66] += total / len(true_prev_ec_lst)
                     pathwayFeatures[pidx, 30] = total / len(true_prev_ec_lst)
 

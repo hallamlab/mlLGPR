@@ -5,17 +5,16 @@ includes constructing similarity of pathways, such as
 smith-waterman algorithm.
 '''
 
+import networkx as nx
+import numpy as np
 import os
 import re
 import sys
 import traceback
 from collections import OrderedDict
+from fuzzywuzzy import fuzz
 from itertools import combinations
 from multiprocessing import Pool
-
-import networkx as nx
-import numpy as np
-from fuzzywuzzy import fuzz
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.metrics.pairwise import cosine_similarity, chi2_kernel
 
@@ -451,7 +450,8 @@ class DataObject(object):
 
         fileDesc = '# This file represents the extracted features (X) with abundances...'
         self.SaveData(data=fileDesc, fname=XName, savepath=savepath, tag='the extracted features', mode='w+b')
-        self.SaveData(data=('nTotalSamples', X.shape[0], 'nTotalComponents', X.shape[1], 'nTotalClassLabels', len(idx_lst),
+        self.SaveData(
+            data=('nTotalSamples', X.shape[0], 'nTotalComponents', X.shape[1], 'nTotalClassLabels', len(idx_lst),
                   'nEvidenceFeatures', featuresList[1] + 2 * len(idx_lst),
                   'nTotalClassEvidenceFeatures', featuresList[2] * len(idx_lst)),
             fname=XName, savepath=savepath, mode='a+b', printTag=False)

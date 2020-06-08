@@ -2,12 +2,11 @@
 This is a utility module for the mlLGPR file.
 '''
 
+import numpy as np
 import os
 import sys
 import traceback
 from collections import OrderedDict
-
-import numpy as np
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import coverage_error, label_ranking_loss, label_ranking_average_precision_score
 from sklearn.metrics import f1_score, precision_score, recall_score
@@ -19,6 +18,7 @@ except:
     import pickle as pkl
 
 EPSILON = np.finfo(np.float).eps
+
 
 def LoadItemFeatures(fname, components=True):
     try:
@@ -149,8 +149,8 @@ def ExtractLabels(dataId, useAllLabels, nSample, fName, datasetPath):
     return classLabelsIds, classlabels
 
 
-def PrepareDataset(dataId, useAllLabels=False, trainSize=0.8, valSize=0.2, datasetPath='', 
-                   X_name = "synset_X.pkl" , y_name = "synset_y.pkl", file_name="synset"):
+def PrepareDataset(dataId, useAllLabels=False, trainSize=0.8, valSize=0.2, datasetPath='',
+                   X_name="synset_X.pkl", y_name="synset_y.pkl", file_name="synset"):
     X = os.path.join(datasetPath, X_name)
     y = os.path.join(datasetPath, y_name)
     classLabelsIds = OrderedDict()

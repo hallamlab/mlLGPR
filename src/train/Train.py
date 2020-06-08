@@ -3,22 +3,22 @@ This file is the main entry used to train the input dataset
 using mlLGPR train and also report the predicted pathways.
 '''
 
+import numpy as np
 import os
 import os.path
 import sys
 import time
 import traceback
-
-import numpy as np
 from model.mlLGPR import mlLGPR
-from prep_biocyc.DataObject import DataObject
 from model.mlUtility import ListHeaderFile, DetailHeaderFile, ComputePathwayAbundance
 from model.mlUtility import PrepareDataset, LoadData, SaveData, Score
+from prep_biocyc.DataObject import DataObject
 
 try:
     import cPickle as pkl
 except:
     import pickle as pkl
+
 
 def _saveFileName(clf, saveFileName, time=False):
     if clf.l1_ratio == 1:
@@ -55,7 +55,7 @@ def _report(clf, use_tCriterion, dataFile, saveFileName, t_arg):
              wString=True, printTag=False)
     X_file = os.path.join(t_arg.dspath, dataFile)
     startTime = time.time()
-    y_pred_prob = clf.predict(X_file=X_file, applyTCriterion= use_tCriterion, estimateProb=True)
+    y_pred_prob = clf.predict(X_file=X_file, applyTCriterion=use_tCriterion, estimateProb=True)
     pathwayAbun = ComputePathwayAbundance(X_file=X_file,
                                           labelsComponentsFile=os.path.join(t_arg.ospath, t_arg.pathway_ec),
                                           classLabelsIds=clf.classLabelsIds, mlbClasses=clf.mlb.classes,
@@ -95,7 +95,7 @@ def _train(t_arg, channel):
     '''
     Create training objData by calling the Data class
     '''
-       
+
     ##########################################################################################################
     ###################        TRAINING DATA USING MULTI-LABEL LOGISTIC REGRESSION         ###################
     ##########################################################################################################
@@ -111,14 +111,14 @@ def _train(t_arg, channel):
             labelsComponentsMappingFile = os.path.join(t_arg.ospath, t_arg.pathway_ec)
         else:
             labelsComponentsMappingFile = None
-        
+
         print('\t>> Constructing a training dataset from: {0:s} and {1:s}'.format(t_arg.X_name, t_arg.y_name))
         file_name = t_arg.file_name + '_values.pkl'
         if t_arg.save_prepared_dataset is True:
             value_lst = PrepareDataset(dataId=data_id, useAllLabels=t_arg.all_classes, trainSize=t_arg.train_size,
-                                       valSize=t_arg.val_size, datasetPath=t_arg.dspath, 
-                                       X_name = t_arg.X_name, y_name = t_arg.y_name,
-                                       file_name = t_arg.file_name)
+                                       valSize=t_arg.val_size, datasetPath=t_arg.dspath,
+                                       X_name=t_arg.X_name, y_name=t_arg.y_name,
+                                       file_name=t_arg.file_name)
             SaveData(data=value_lst, fname=file_name, savepath=t_arg.dspath, tag='prepared dataset')
         else:
             value_lst = LoadData(fname=file_name, loadpath=t_arg.dspath, tag='prepared dataset')
@@ -139,8 +139,8 @@ def _train(t_arg, channel):
                      nTotalEvidenceFeatures=value_lst[4],
                      nTotalClassEvidenceFeatures=value_lst[5],
                      penalty=t_arg.penalty, alpha=alpha,
-                     l1_ratio=l1_ratio, max_inner_iter=t_arg.max_inner_iter, 
-                     nEpochs=t_arg.nEpochs, nBatches=t_arg.nBatches, 
+                     l1_ratio=l1_ratio, max_inner_iter=t_arg.max_inner_iter,
+                     nEpochs=t_arg.nEpochs, nBatches=t_arg.nBatches,
                      testInterval=t_arg.test_interval, adaptive_beta=t_arg.adaptive_beta,
                      threshold=t_arg.threshold, n_jobs=t_arg.n_jobs)
         print('\t\t## The following parameters are applied:\n\t\t\t{0}'.format(clf.print_arguments()),
@@ -150,21 +150,22 @@ def _train(t_arg, channel):
         clf.fit(X_file=os.path.join(t_arg.dspath, value_lst[6]),
                 y_file=os.path.join(t_arg.dspath, value_lst[7]),
                 XdevFile=os.path.join(t_arg.dspath, value_lst[8]),
-                ydevFile=os.path.join(t_arg.dspath, value_lst[9]), 
+                ydevFile=os.path.join(t_arg.dspath, value_lst[9]),
                 savepath=t_arg.mdpath)
 
     ##########################################################################################################
     ###################         PREDICTING LABELS USING MULTI-LABEL LEARNING MODEL         ###################
     ##########################################################################################################
 
-    if t_arg.predict:       
+    if t_arg.predict:
         if t_arg.parse_input:
             print('\n*** EXTRACTING INFORMATION FROM DATASET...')
             print('\t>> Loading files...')
             objData = LoadData(fname=t_arg.objectname, loadpath=t_arg.ospath, tag='data object')
-            ptw_ec_spmatrix, ptw_ec_id = objData.LoadData(fname=t_arg.pathway_ec, loadpath=t_arg.ospath, tag='mapping ECs onto pathway')
+            ptw_ec_spmatrix, ptw_ec_id = objData.LoadData(fname=t_arg.pathway_ec, loadpath=t_arg.ospath,
+                                                          tag='mapping ECs onto pathway')
             X = objData.ExtractInputFromMGFiles(colIDx=ptw_ec_id, useEC=True, folderPath=t_arg.dspath,
-                                                    processes=t_arg.n_jobs)
+                                                processes=t_arg.n_jobs)
             nSamples = X.shape[0]
             fName = os.path.join(t_arg.ospath, t_arg.ecfeature)
             with open(fName, 'rb') as f_in:
@@ -180,7 +181,7 @@ def _train(t_arg, channel):
                                         displayInterval=t_arg.display_interval, XName=X_name, savepath=t_arg.dspath)
         else:
             X_name = t_arg.X_name
-            
+
         print('\n*** PREDICTING USING MULTI-LABEL LOGISTIC REGRESSION...')
         if t_arg.useLabelComponentFeatures:
             print('\t>> Retreiving labels components mapping file from: {0:s}'.format(t_arg.pathwayfeature))
