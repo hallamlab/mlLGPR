@@ -188,6 +188,3 @@ If you find *mlLGPR* useful in your research, please consider citing the followi
 
 ## Contact
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
-
-## Upcoming features
-- Incorporate graph based learning.
