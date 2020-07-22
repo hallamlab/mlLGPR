@@ -132,7 +132,7 @@ To enable training using L2 regularization, run the following command:
 python main.py --train --binarize --penalty "l2" --alpha 0.0001 --l2-ratio 0.65 --objectname "object.pkl" --X-name "synset_50_X.pkl" --y-name "synset_50_y.pkl" --file-name "synset" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --n-jobs 1 --nEpochs 3 --nBatches 1
 ```
 
-This will result in a model "mlLGPR_l2_ab_re_pe_pp_pc.pkl" stored in mdpath. You can change --penalty "l2" to --penalty "l1" for L1 regularization.
+This will result in a model "mlLGPR_en_ab_re_pe.pkl" stored in mdpath. You can change --penalty "l2" to --penalty "l1" for L1 regularization.
 
 #### Example 4
 To training using possible pathway and pathway common features, run the following command: 
@@ -160,7 +160,7 @@ mlLGPR takes PathoLogic input format (0.pf) for inference. We provided a sample 
 python main.py --predict --parse-input --model "mlLGPR_en_ab_re_pe.pkl" --file-name "synset_parse" --objectname "object.pkl" --pathway-ec "pathway_ec.pkl" --ecfeature "ecfeature.pkl" --predict-file "mlLGPR" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]/symbiont" --mdpath "[path to folder containing model]" --rspath "[path to folder containing prediction outputs]" --n-jobs 1 --nBatches 1
 ```
 
-Make sure you obtain "mlLGPR_en_ab_re_pe.lists" and "mlLGPR_en_ab_re_pe.details" files corresponding a list of infered pathways and predicted pathways with score and abundance information. Scores are in [0,1] where higher value entails strong confidence. 
+This would create two files, "mlLGPR_en_ab_re_pe.lists" and "mlLGPR_en_ab_re_pe.details", corresponding a list of infered pathways and predicted pathways with score and abundance information. Scores are in [0,1] where higher value entails strong confidence. 
 
 #### Example 2
 
