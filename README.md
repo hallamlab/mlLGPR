@@ -110,36 +110,28 @@ The following examples can be executed using files provided in [Zenodo](https://
 #### Example 1
 To train mlLGPR using elastic-net with **load-prepared-dataset** option, execute the following command:
 
-```
-python main.py --train --load-prepared-dataset --train-size 0.9 --val-size 0.15 --binarize --penalty "elasticnet" --alpha 0.0001 --l2-ratio 0.65 --objectname "object.pkl" --X-name "synset_50_X.pkl" --y-name "synset_50_y.pkl" --file-name "synset" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --n-jobs 1 --nEpochs 3 --nBatches 1
-```
+``python main.py --train --load-prepared-dataset --train-size 0.9 --val-size 0.15 --binarize --penalty "elasticnet" --alpha 0.0001 --l2-ratio 0.65 --objectname "object.pkl" --X-name "synset_50_X.pkl" --y-name "synset_50_y.pkl" --file-name "synset" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --n-jobs 1 --nEpochs 3 --nBatches 1``
 
 This will result in multiple training, validation, test data located in dspath, and a model "mlLGPR_en_ab_re_pe.pkl" stored in mdpath.
 
 #### Example 2
 If a dataset was previously partitioned, execute the following command for training: 
 
-```
-python main.py --train --binarize --penalty "elasticnet" --alpha 0.0001 --l2-ratio 0.65 --objectname "object.pkl" --file-name "synset" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --n-jobs 1 --nEpochs 3 --nBatches 1
-```
+``python main.py --train --binarize --penalty "elasticnet" --alpha 0.0001 --l2-ratio 0.65 --objectname "object.pkl" --file-name "synset" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --n-jobs 1 --nEpochs 3 --nBatches 1``
 
 This will result in a model "mlLGPR_en_ab_re_pe.pkl" stored in mdpath.
 
 #### Example 3
 To enable training using L2 regularization, run the following command: 
 
-```
-python main.py --train --binarize --penalty "l2" --alpha 0.0001 --l2-ratio 0.65 --objectname "object.pkl" --X-name "synset_50_X.pkl" --y-name "synset_50_y.pkl" --file-name "synset" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --n-jobs 1 --nEpochs 3 --nBatches 1
-```
+``python main.py --train --binarize --penalty "l2" --alpha 0.0001 --l2-ratio 0.65 --objectname "object.pkl" --X-name "synset_50_X.pkl" --y-name "synset_50_y.pkl" --file-name "synset" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --n-jobs 1 --nEpochs 3 --nBatches 1``
 
 This will result in a model "mlLGPR_en_ab_re_pe.pkl" stored in mdpath. You can change --penalty "l2" to --penalty "l1" for L1 regularization.
 
 #### Example 4
 To training using possible pathway and pathway common features, run the following command: 
 
-```
-python main.py --train --usePossibleClassFeatures --useLabelComponentFeatures --binarize --penalty "elasticnet" --alpha 0.0001 --l2-ratio 0.65 --objectname "object.pkl" --X-name "synset_50_X.pkl" --y-name "synset_50_y.pkl" --file-name "synset" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --n-jobs 1 --nEpochs 3 --nBatches 1
-```
+``python main.py --train --usePossibleClassFeatures --useLabelComponentFeatures --binarize --penalty "elasticnet" --alpha 0.0001 --l2-ratio 0.65 --objectname "object.pkl" --X-name "synset_50_X.pkl" --y-name "synset_50_y.pkl" --file-name "synset" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --n-jobs 1 --nEpochs 3 --nBatches 1``
 
 This will result in a model "mlLGPR_en_ab_re_pe_pp_pc.pkl" stored in mdpath.
 
@@ -156,9 +148,7 @@ The following examples can be executed using files provied in [Zenodo](https://z
 
 mlLGPR takes PathoLogic input format (0.pf) for inference. We provided a sample (symbiont.zip). Please unzip and save it into dspath. Next, run the following command:
 
-```
-python main.py --predict --parse-input --model "mlLGPR_en_ab_re_pe.pkl" --file-name "synset_parse" --objectname "object.pkl" --pathway-ec "pathway_ec.pkl" --ecfeature "ecfeature.pkl" --predict-file "mlLGPR" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]/symbiont" --mdpath "[path to folder containing model]" --rspath "[path to folder containing prediction outputs]" --n-jobs 1 --nBatches 1
-```
+``python main.py --predict --parse-input --model "mlLGPR_en_ab_re_pe.pkl" --file-name "synset_parse" --objectname "object.pkl" --pathway-ec "pathway_ec.pkl" --ecfeature "ecfeature.pkl" --predict-file "mlLGPR" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]/symbiont" --mdpath "[path to folder containing model]" --rspath "[path to folder containing prediction outputs]" --n-jobs 1 --nBatches 1``
 
 This would create two files, "mlLGPR_en_ab_re_pe.lists" and "mlLGPR_en_ab_re_pe.details", corresponding a list of infered pathways and predicted pathways with score and abundance information. Scores are in [0,1] where higher value entails strong confidence. 
 
@@ -166,9 +156,7 @@ This would create two files, "mlLGPR_en_ab_re_pe.lists" and "mlLGPR_en_ab_re_pe.
 
 Alternatively, you can run the following command if you already parsed files (e.g. "mg_cami_X.pkl"):
 
-```
-python main.py --predict --X-name "mg_cami_X.pkl" --model "mlLGPR_en_ab_re_pe.pkl" --objectname "object.pkl" --predict-file "mlLGPR" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --rspath "[path to folder containing prediction outputs]" --n-jobs 1 --nBatches 1
-```
+``python main.py --predict --X-name "mg_cami_X.pkl" --model "mlLGPR_en_ab_re_pe.pkl" --objectname "object.pkl" --predict-file "mlLGPR" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --rspath "[path to folder containing prediction outputs]" --n-jobs 1 --nBatches 1``
 
 The output files should have the same name as in example 1.
 
@@ -176,9 +164,7 @@ The output files should have the same name as in example 1.
 
 For the adaptive prediction, run the following command for "mg_cami_X.pkl" file using **--use-tCriterion** and **--adaptive-beta** arguments:
 
-```
-python main.py --predict --use-tCriterion --adaptive-beta 0.45 --X-name "mg_cami_X.pkl" --model "mlLGPR_en_ab_re_pe.pkl" --objectname "object.pkl" --predict-file "mlLGPR" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --rspath "[path to folder containing prediction outputs]" --n-jobs 1 --nBatches 1 
-```
+``python main.py --predict --use-tCriterion --adaptive-beta 0.45 --X-name "mg_cami_X.pkl" --model "mlLGPR_en_ab_re_pe.pkl" --objectname "object.pkl" --predict-file "mlLGPR" --ospath "[path to folder containing object files]" --dspath "[path to folder containing datasets]" --mdpath "[path to folder containing model]" --rspath "[path to folder containing prediction outputs]" --n-jobs 1 --nBatches 1``
 
 The output files should have the same name as in example 1.
 
