@@ -24,19 +24,19 @@ Please download the following files from [Zenodo](https://zenodo.org/record/3821
     - "pathway_ec.pkl": an object containing Pathway-EC associations.
     - "reaction_ec.pkl": an object containing Reaction-EC associations.
     - "ec2pathway.txt": a text file containing Pathway to EC associations.
-    - "pathwayfeature.pkl": a matrix representing features of pathways of size 2526 x 34.
-    - "ecfeature.pkl": a matrix representing features of ECs of size 6378 x 25.
+    - "pathwayfeature.pkl": a matrix representing features of pathways of size (2526, 34).
+    - "ecfeature.pkl": a matrix representing features of ECs of size (6378, 25).
 - We also provided pretrained models and samples for testing:
-    - "gold_dataset_ptw_ec_63_X.pkl": The golden dataset of size 63 x 89602. First six examples correspond to: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc.
-    - "gold_dataset_ptw_ec_63_y.pkl": The golden dataset of size 63 x 2526. First six examples correspond pathways to: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc.
-    - "mg_symbionts_X.pkl": The symbiont dataset of size 3 x 89602, corresponding moranella, tremblaya, and composite genomes, respectvely.
+    - "gold_dataset_ptw_ec_63_X.pkl": The golden dataset of size (63, 89602). First six examples correspond to: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc.
+    - "gold_dataset_ptw_ec_63_y.pkl": The golden dataset of size (63, 2526). First six examples correspond pathways to: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc.
+    - "mg_symbionts_X.pkl": The symbiont dataset of size (3, 89602), corresponding moranella, tremblaya, and composite genomes, respectvely.
     - "symbiont.zip": The symbiont dataset in the PathoLogic input format (0.pf).
-    - "mg_cami_X.pkl": The CAMI dataset of size 40 x 89602.
-    - "mg_hots_4_X.pkl": The HOT metagenomics dataset of size 13 x 89602. The data is a combination of DNA and RNA. Samples for DNA: [5,6] for 25m;  [0,1] for 75m; [2] for 110m; and [3,4] for 500m. Samples for RNA: [7,8,9] for 25m;  [10] for 75m; [12] for 110m; and [11] for 500m.
-    - "syn_dataset_ptw_ec_15000_X.pkl": The synset dataset of size 15000 x 89602.
-    - "syn_dataset_ptw_ec_15000_y.pkl": Pathways of *syn_dataset_ptw_ec_15000_X.pkl* dataset of size 15000 x 2526.
-    - "synset_50_X.pkl": The synset dataset of size 50 x 89602.
-    - "synset_50_y.pkl": Pathways of *synset_50_X.pkl* dataset of size 50 x 2526.
+    - "mg_cami_X.pkl": The CAMI dataset of size (40, 89602).
+    - "mg_hots_4_X.pkl": The HOT metagenomics dataset of size (13, 89602). The data is a combination of DNA and RNA. Samples for DNA: [5,6] for 25m;  [0,1] for 75m; [2] for 110m; and [3,4] for 500m. Samples for RNA: [7,8,9] for 25m;  [10] for 75m; [12] for 110m; and [11] for 500m.
+    - "syn_dataset_ptw_ec_15000_X.pkl": The synset dataset of size (15000, 89602).
+    - "syn_dataset_ptw_ec_15000_y.pkl": Pathways of *syn_dataset_ptw_ec_15000_X.pkl* dataset of size (15000, 2526).
+    - "synset_50_X.pkl": The synset dataset of size (50, 89602).
+    - "synset_50_y.pkl": Pathways of *synset_50_X.pkl* dataset of size (50, 2526).
     - "mlLGPR_en_ab_re_pe.pkl": a pretrained model on "syn_dataset_ptw_ec_15000_X.pkl" and "syn_dataset_ptw_ec_15000_y.pkl". This model was trained using abundance, reaction evidence, and pathway evidence features.
 - Please store the files in **one directory** for the best practice.
     
