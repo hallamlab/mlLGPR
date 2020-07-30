@@ -5,7 +5,7 @@ Launch application for parsing and training the metagenomics files
 Author = Abdurrahman Abul-Basher
 Version = 1.00
 License = Hallam's lab
-Email = ar.basher@alumni.ubc.ca
+Email = arbasher@alumni.ubc.ca
 TimeStamp: Thursday, July 23, 2020
 
 This file is the main entry used to extract metacyc information,
