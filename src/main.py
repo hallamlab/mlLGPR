@@ -2,7 +2,7 @@
 ==================================================================
 Launch application for parsing and training the metagenomics files
 ==================================================================
-Author = Abdurrahman Abul-Basher
+Author = Abdurr Rahman M. A. Basher
 Version = 1.00
 License = Hallam's lab
 Email = arbasher@alumni.ubc.ca
