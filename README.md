@@ -33,8 +33,10 @@ Please download the following files from [Zenodo](https://zenodo.org/record/3821
     - "symbiont.zip": The symbiont dataset in the PathoLogic input format (0.pf).
     - "mg_cami_X.pkl": The CAMI dataset of size (40, 89602).
     - "mg_hots_4_X.pkl": The HOT metagenomics dataset of size (13, 89602). The data is a combination of DNA and RNA. Samples for DNA: [5,6] for 25m;  [0,1] for 75m; [2] for 110m; and [3,4] for 500m. Samples for RNA: [7,8,9] for 25m;  [10] for 75m; [12] for 110m; and [11] for 500m.
-    - "syn_dataset_ptw_ec_15000_X.pkl": The synset dataset of size (15000, 89602).
+    - "syn_dataset_ptw_ec_15000_X.pkl": The synset dataset (Synset-1) of size (15000, 89602).
     - "syn_dataset_ptw_ec_15000_y.pkl": Pathways of *syn_dataset_ptw_ec_15000_X.pkl* dataset of size (15000, 2526).
+    - "syn_dataset_ptw_ec_15000_X_noise.pkl": The noisy synset dataset (Synset-2) of size (15000, 89602).
+    - "syn_dataset_ptw_ec_15000_y_noise.pkl": Pathways of *syn_dataset_ptw_ec_15000_X_noise.pkl* dataset of size (15000, 2526).
     - "synset_50_X.pkl": The synset dataset of size (50, 89602).
     - "synset_50_y.pkl": Pathways of *synset_50_X.pkl* dataset of size (50, 2526).
     - "mlLGPR_en_ab_re_pe.pkl": a pretrained model on "syn_dataset_ptw_ec_15000_X.pkl" and "syn_dataset_ptw_ec_15000_y.pkl". This model was trained using abundance, reaction evidence, and pathway evidence features.
