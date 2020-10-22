@@ -172,7 +172,7 @@ The output files should have the same name as in example 1.
 
 ## Citing
 If you find *mlLGPR* useful in your research, please consider citing the following paper:
-- M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway inference using multi-label classification with rich pathway features."](https://doi.org/10.1371/journal.pcbi.1008174)**, PLOS (2020).
+- M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway inference using multi-label classification with rich pathway features."](https://doi.org/10.1371/journal.pcbi.1008174)**, PLoS Comput Biol (2020).
 
 ## Contact
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
