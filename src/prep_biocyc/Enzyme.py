@@ -25,7 +25,7 @@ class Enzyme(object):
     def ProcessEnzymesCol(self, e_id, lst_ids, data_path, header=False):
         enzyme_file = os.path.join(data_path, self.enzyme_fname)
         if os.path.isfile(enzyme_file):
-            print('\t\t\t--> Prepossessing enzymes database from: {0}'.format(enzyme_file.split('/')[-1]))
+            print('\t\t\t--> Prepossessing enzymes database from: {0}'.format(enzyme_file.split(os.sep)[-1]))
             with open(enzyme_file, errors='ignore') as f:
                 for text in f:
                     if not str(text).startswith('#'):
@@ -50,7 +50,7 @@ class Enzyme(object):
         enzyme_file = os.path.join(data_path, self.enzrxn_fname)
         if os.path.isfile(enzyme_file):
             print('\t\t\t--> Prepossessing additional enzymatic reactions database from: '
-                  '{0}'.format(enzyme_file.split('/')[-1]))
+                  '{0}'.format(enzyme_file.split(os.sep)[-1]))
             with open(enzyme_file, errors='ignore') as f:
                 for text in f:
                     if not str(text).startswith('#'):

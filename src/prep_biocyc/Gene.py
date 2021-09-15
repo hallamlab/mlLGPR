@@ -25,7 +25,7 @@ class Gene(object):
         gene_file = os.path.join(data_path, self.gene_dat_fname)
         if os.path.isfile(gene_file):
             print('\t\t\t--> Prepossessing genes database from: '
-                  '{0}'.format(gene_file.split('/')[-1]))
+                  '{0}'.format(gene_file.split(os.sep)[-1]))
             with open(gene_file, errors='ignore') as f:
                 for text in f:
                     if not str(text).strip().startswith('#'):
@@ -65,7 +65,7 @@ class Gene(object):
         gene_file = os.path.join(data_path, self.gene_col_fname)
         if os.path.isfile(gene_file):
             print('\t\t\t--> Prepossessing genes database from: {0}'
-                  .format(gene_file.split('/')[-1]))
+                  .format(gene_file.split(os.sep)[-1]))
             with open(gene_file, errors='ignore') as f:
                 for text in f:
                     if not str(text).startswith('#'):

@@ -3,12 +3,13 @@ This is considered the main entry point to preprocesses
 BioCyc PGDBs and to construct samples.
 '''
 
-import numpy as np
 import os
 import os.path
 import sys
 import time
 import traceback
+
+import numpy as np
 from prep_biocyc.DataObject import DataObject
 
 try:
@@ -128,7 +129,7 @@ def _parseData(b_arg):
     ######################                   CONSTRUCT GOLDEN CORPORA                   ######################
     ##########################################################################################################
 
-    nSamples = 63
+    nSamples = b_arg.n_golden_sample
     if b_arg.build_golden_dataset:
         print('\n*** CONSTRUCTING GOLDEN DATASET...')
         print('\t>> Loading files...')

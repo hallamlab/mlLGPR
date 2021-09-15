@@ -2,18 +2,18 @@
 This file trains the metagenomics inputset using multi-label
 logistic regression.
 '''
-import numpy as np
 import os
 import time
 import traceback
 import warnings
+
+import numpy as np
 from model.mlUtility import LoadItemFeatures, LoadYFile, ReverseIdx
 from scipy.special import expit
 from sklearn import preprocessing
 from sklearn.linear_model import SGDClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import log_loss
-from sklearn.model_selection import train_test_split
 
 try:
     import cPickle as pkl

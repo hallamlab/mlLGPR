@@ -4,11 +4,12 @@ requires various data objects obtained from BioCyc PGDBs to be
 available as inputs to designated machine learning models.
 '''
 
+import re
+from operator import itemgetter
+
 import networkx as nx
 import numpy as np
-import re
 from fuzzywuzzy import process
-from operator import itemgetter
 
 try:
     import cPickle as pkl
@@ -466,8 +467,8 @@ class Feature(object):
                 if infoList[1][rxn][3][1]:
                     e = [self.ecID[e] for e in infoList[1][rxn][3][1]]
                     unique_ec_lst.extend(e)
-                if infoList[1][rxn][5][1] != False:
-                    orphan_ec_lst.extend(e)
+                    if infoList[1][rxn][5][1] != False:
+                        orphan_ec_lst.extend(e)
 
             '''
             Extracting Info from Knowledge Data
@@ -760,8 +761,8 @@ class Feature(object):
                 if infoList[1][rxn][3][1]:
                     e = [e for e in infoList[1][rxn][3][1]]
                     unique_ec_lst.extend(e)
-                if infoList[1][rxn][5][1] != False:
-                    orphan_ec_lst.extend(e)
+                    if infoList[1][rxn][5][1] != False:
+                        orphan_ec_lst.extend(e)
 
             #######################################################################################################
             ################################ Extracting Info from Experimental Data ###############################

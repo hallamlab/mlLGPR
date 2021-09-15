@@ -3,16 +3,16 @@ This file is the main entry used to train the input dataset
 using mlLGPR train and also report the predicted pathways.
 '''
 
-import numpy as np
 import os
 import os.path
 import sys
 import time
 import traceback
+
+import numpy as np
 from model.mlLGPR import mlLGPR
 from model.mlUtility import ListHeaderFile, DetailHeaderFile, ComputePathwayAbundance
-from model.mlUtility import PrepareDataset, LoadData, SaveData, Score
-from prep_biocyc.DataObject import DataObject
+from model.mlUtility import PrepareDataset, LoadData, SaveData
 
 try:
     import cPickle as pkl
@@ -20,7 +20,7 @@ except:
     import pickle as pkl
 
 
-def _saveFileName(clf, saveFileName, time=False):
+def _saveFileName(clf, saveFileName):
     if clf.l1_ratio == 1:
         saveFileName = saveFileName + '_l1_ab'
     elif clf.l1_ratio == 0:
@@ -54,7 +54,6 @@ def _report(clf, use_tCriterion, dataFile, saveFileName, t_arg):
              fname=saveFileDetails, savepath=t_arg.rspath, mode='a',
              wString=True, printTag=False)
     X_file = os.path.join(t_arg.dspath, dataFile)
-    startTime = time.time()
     y_pred_prob = clf.predict(X_file=X_file, applyTCriterion=use_tCriterion, estimateProb=True)
     pathwayAbun = ComputePathwayAbundance(X_file=X_file,
                                           labelsComponentsFile=os.path.join(t_arg.ospath, t_arg.pathway_ec),
@@ -146,7 +145,6 @@ def _train(t_arg, channel):
         print('\t\t## The following parameters are applied:\n\t\t\t{0}'.format(clf.print_arguments()),
               file=sys.stderr)
         print('\t>> train...')
-        startTime = time.time()
         clf.fit(X_file=os.path.join(t_arg.dspath, value_lst[6]),
                 y_file=os.path.join(t_arg.dspath, value_lst[7]),
                 XdevFile=os.path.join(t_arg.dspath, value_lst[8]),
@@ -166,7 +164,6 @@ def _train(t_arg, channel):
                                                           tag='mapping ECs onto pathway')
             X = objData.ExtractInputFromMGFiles(colIDx=ptw_ec_id, useEC=True, folderPath=t_arg.dspath,
                                                 processes=t_arg.n_jobs)
-            nSamples = X.shape[0]
             fName = os.path.join(t_arg.ospath, t_arg.ecfeature)
             with open(fName, 'rb') as f_in:
                 while True:

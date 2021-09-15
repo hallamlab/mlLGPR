@@ -2,15 +2,16 @@
 This is a utility module for the mlLGPR file.
 '''
 
-import numpy as np
 import os
 import sys
 import traceback
 from collections import OrderedDict
+
+import numpy as np
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import coverage_error, label_ranking_loss, label_ranking_average_precision_score
 from sklearn.metrics import f1_score, precision_score, recall_score
-from sklearn.metrics import jaccard_similarity_score, hamming_loss
+from sklearn.metrics import jaccard_score, hamming_loss
 
 try:
     import cPickle as pkl
@@ -490,18 +491,28 @@ def Score(clf, X_file, y_file, applyTCriterion=False, loadBatch=False, sixDB=Fal
         SaveData(data='\t\t\t--> Average macro f1-score: {0:.4f}\n'.format(f1_samples_macro), fname=fname,
                  savepath=savepath, mode=mode, wString=True, printTag=False)
 
-        print('\t\t5)- Jaccard similarity score...')
-        js_samples_normalize = jaccard_similarity_score(y, y_hat)
-        js_samples_not_normalize = jaccard_similarity_score(y, y_hat, normalize=False)
-        print('\t\t\t--> Jaccard similarity score (normalized): {0:.4f}'.format(js_samples_normalize))
-        print('\t\t\t--> Jaccard similarity score (not-normalized): {0:.4f}'.format(js_samples_not_normalize))
-        SaveData(data='\t\t5)- Jaccard similarity score...\n',
+        print('\t\t5)- Jaccard score...')
+        js_score_samples = jaccard_score(y, y_hat, average='samples')
+        js_score_micro = jaccard_score(y, y_hat, average='micro')
+        js_score_macro = jaccard_score(y, y_hat, average='macro')
+        js_score_weighted = jaccard_score(y, y_hat, average='weighted')
+        print('\t\t\t--> Jaccard score (samples): {0:.4f}'.format(js_score_samples))
+        print('\t\t\t--> Jaccard score (micro): {0:.4f}'.format(js_score_micro))
+        print('\t\t\t--> Jaccard score (macro): {0:.4f}'.format(js_score_macro))
+        print('\t\t\t--> Jaccard score (weighted): {0:.4f}'.format(js_score_weighted))
+        SaveData(data='\t\t5)- Jaccard score...\n',
                  fname=fname, savepath=savepath, mode=mode, wString=True, printTag=False)
         SaveData(
-            data='\t\t\t--> Jaccard similarity score (normalized): {0:.4f}\n'.format(js_samples_normalize),
+            data='\t\t\t--> Jaccard score (samples): {0:.4f}\n'.format(js_score_samples),
             fname=fname, savepath=savepath, mode=mode, wString=True, printTag=False)
         SaveData(
-            data='\t\t\t--> Jaccard similarity score (not-normalized): {0:.4f}\n'.format(js_samples_not_normalize),
+            data='\t\t\t--> Jaccard score (micro): {0:.4f}\n'.format(js_score_micro),
+            fname=fname, savepath=savepath, mode=mode, wString=True, printTag=False)
+        SaveData(
+            data='\t\t\t--> Jaccard score (macro): {0:.4f}\n'.format(js_score_macro),
+            fname=fname, savepath=savepath, mode=mode, wString=True, printTag=False)
+        SaveData(
+            data='\t\t\t--> Jaccard score (weighted): {0:.4f}\n'.format(js_score_weighted),
             fname=fname, savepath=savepath, mode=mode, wString=True, printTag=False)
 
         ce_samples = coverage_error(y, y_hat)

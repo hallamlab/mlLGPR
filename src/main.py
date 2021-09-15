@@ -70,7 +70,8 @@ def internalArgs(parse_args):
     arg.ncomponents_to_corrupt = parse_args.ncomponents_to_corrupt
     arg.lower_bound_nitem_ptw = parse_args.lower_bound_nitem_ptw
     arg.ncomponents_to_corrupt_outside = parse_args.ncomponents_to_corrupt_outside
-    arg.nsample = parse_args.nSample  # metagenomic dataset =418; golden dataset =63
+    arg.nsample = parse_args.nSample
+    arg.n_golden_sample = parse_args.nGoldenSample
     arg.average_item_per_sample = parse_args.average_item_per_sample
     arg.build_golden_dataset = parse_args.build_golden_dataset
     if parse_args.build_syn_dataset:
@@ -193,6 +194,8 @@ def parseCommandLine():
                         help='Number of False components to be added in creating synthetic samples. (default value: 2)')
     parser.add_argument('--nSample', default=10, type=int,
                         help='Number of synthetic samples to generate. (default value: 10)')
+    parser.add_argument('--nGoldenSample', default=63, type=int,
+                        help='Number of golden samples that will be generate. (default value: 63)')
     parser.add_argument('--average-item-per-sample', default=500, type=int,
                         help='Average number of pathways for each sample in generating samples. (default value: 500)')
     parser.add_argument('--build-golden-dataset', action='store_true', default=False,
@@ -322,5 +325,4 @@ if __name__ == '__main__':
     os.system('clear')
     print(__doc__)
     # dataset types: syn_ds, meta_ds, gold_ds
-    # metagenomic dataset =418; golden dataset =63
     parseCommandLine()

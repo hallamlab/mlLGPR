@@ -25,7 +25,7 @@ class Pathway(object):
     def ProcessPathways(self, p_id, lst_ids, data_path):
         file = os.path.join(data_path, self.pathway_fname)
         if os.path.isfile(file):
-            print('\t\t\t--> Prepossessing pathways from: {0}'.format(file.split('/')[-1]))
+            print('\t\t\t--> Prepossessing pathways from: {0}'.format(file.split(os.sep)[-1]))
             with open(file, errors='ignore') as f:
                 for text in f:
                     if not str(text).startswith('#'):
@@ -93,7 +93,7 @@ class Pathway(object):
     def ProcessPathwaysCol(self, p_id, lst_ids, data_path, header=False):
         file = os.path.join(data_path, self.pathway_genes_fname)
         if os.path.isfile(file):
-            print('\t\t\t--> Prepossessing pathways from: {0}'.format(file.split('/')[-1]))
+            print('\t\t\t--> Prepossessing pathways from: {0}'.format(file.split(os.sep)[-1]))
             with open(file, errors='ignore') as f:
                 for text in f:
                     if not str(text).startswith('#'):

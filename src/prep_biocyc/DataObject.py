@@ -5,16 +5,17 @@ includes constructing similarity of pathways, such as
 smith-waterman algorithm.
 '''
 
-import networkx as nx
-import numpy as np
 import os
 import re
 import sys
 import traceback
 from collections import OrderedDict
-from fuzzywuzzy import fuzz
 from itertools import combinations
 from multiprocessing import Pool
+
+import networkx as nx
+import numpy as np
+from fuzzywuzzy import fuzz
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.metrics.pairwise import cosine_similarity, chi2_kernel
 
@@ -70,7 +71,7 @@ class DataObject(object):
         print('\t>> Building from {0} databases...'.format(len(self.lst_kbpaths)))
         for (index, kbpath) in enumerate(self.lst_kbpaths):
             if os.path.isdir(kbpath) or os.path.exists(kbpath):
-                core_dbname = str(kbpath.split('/')[-2]).upper()
+                core_dbname = str(kbpath.split(os.sep)[-2]).upper()
                 self.lst_kbpaths[index] = core_dbname.lower()
                 print('\t\t{0:d})- {1:s} (progress: {3:.2f}%, {0:d} out of {2:d}):'
                       .format(index + 1, core_dbname, len(self.lst_kbpaths),
@@ -121,7 +122,7 @@ class DataObject(object):
                 self.processedKB.update(datum)
 
             else:
-                print('\t\t## Failed preprocessing {0} database...'.format(kbpath.split('/')[-2]),
+                print('\t\t## Failed preprocessing {0} database...'.format(kbpath.split(os.sep)[-2]),
                       file=sys.stderr)
 
         if constraintKB:
@@ -217,7 +218,7 @@ class DataObject(object):
                 if item[2]:
                     inputPath.append(item[2])
         else:
-            print('\t>> Failed to preprocess {0} file...'.format(inputPath.split('/')[-2]),
+            print('\t>> Failed to preprocess {0} file...'.format(inputPath.split(os.sep)[-2]),
                   file=sys.stderr)
         return inputPath
 
@@ -233,7 +234,7 @@ class DataObject(object):
                 input_file = os.path.join(inputPath, fname)
                 break
         if os.path.isfile(input_file):
-            print('\t\t\t--> Prepossessing input file from: {0}'.format(input_file.split('/')[-1]))
+            print('\t\t\t--> Prepossessing input file from: {0}'.format(input_file.split(os.sep)[-1]))
             product_info = OrderedDict()
             with open(input_file, errors='ignore') as f:
                 for text in f:
@@ -294,7 +295,7 @@ class DataObject(object):
             outputPath = self._parseOutput(outputPath=outputPath, idxOnly=False)
 
         else:
-            print('\t>> Failed to preprocess {0} file...'.format(outputPath.split('/')[-2]),
+            print('\t>> Failed to preprocess {0} file...'.format(outputPath.split(os.sep)[-2]),
                   file=sys.stderr)
         return outputPath
 
@@ -320,7 +321,7 @@ class DataObject(object):
 
         if os.path.isfile(ptw_txt):
             lst_pathways_idx = list()
-            print('\t\t\t--> Prepossessing output file from: {0}'.format(ptw_txt.split('/')[-1]))
+            print('\t\t\t--> Prepossessing output file from: {0}'.format(ptw_txt.split(os.sep)[-1]))
             with open(ptw_txt, errors='ignore') as f:
                 for text in f:
                     if not str(text).startswith('#'):
@@ -341,7 +342,7 @@ class DataObject(object):
         else:
             lst_pathways_idx = list()
             if os.path.isfile(ptw_dat):
-                print('\t\t\t--> Prepossessing output file from: {0}'.format(ptw_dat.split('/')[-1]))
+                print('\t\t\t--> Prepossessing output file from: {0}'.format(ptw_dat.split(os.sep)[-1]))
                 with open(ptw_dat, errors='ignore') as f:
                     for text in f:
                         if not str(text).startswith('#'):
@@ -357,7 +358,7 @@ class DataObject(object):
                                                 lst_pathways_idx.append(pathway_id)
 
             if os.path.isfile(ptw_col):
-                print('\t\t\t--> Prepossessing output file from: {0}'.format(ptw_col.split('/')[-1]))
+                print('\t\t\t--> Prepossessing output file from: {0}'.format(ptw_col.split(os.sep)[-1]))
                 with open(ptw_col, errors='ignore') as f:
                     for text in f:
                         if not str(text).startswith('#'):

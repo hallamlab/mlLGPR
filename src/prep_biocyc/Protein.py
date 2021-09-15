@@ -21,7 +21,7 @@ class Protein(object):
     def ProcessProteins(self, pr_id, go_id, lst_ids, data_path):
         protein_file = os.path.join(data_path, self.fname_protein)
         if os.path.isfile(protein_file):
-            print('\t\t\t--> Prepossessing proteins database from: {0}'.format(protein_file.split('/')[-1]))
+            print('\t\t\t--> Prepossessing proteins database from: {0}'.format(protein_file.split(os.sep)[-1]))
             with open(protein_file, errors='ignore') as f:
                 for text in f:
                     if not str(text).startswith('#'):

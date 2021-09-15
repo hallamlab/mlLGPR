@@ -27,7 +27,7 @@ class Reaction(object):
         """
         reaction_file = os.path.join(data_path, self.reaction_fname)
         if os.path.isfile(reaction_file):
-            print('\t\t\t--> Prepossessing reactions database from: {0}'.format(reaction_file.split('/')[-1]))
+            print('\t\t\t--> Prepossessing reactions database from: {0}'.format(reaction_file.split(os.sep)[-1]))
             with open(reaction_file, errors='ignore') as f:
                 for text in f:
                     if not str(text).startswith('#'):
@@ -110,7 +110,7 @@ class Reaction(object):
         reaction_ec = OrderedDict()
 
         if os.path.isfile(ec_reaction_file):
-            print('\t\t\t--> Adding ec number to reactions from: {0}'.format(ec_reaction_file.split('/')[-1]))
+            print('\t\t\t--> Adding ec number to reactions from: {0}'.format(ec_reaction_file.split(os.sep)[-1]))
             with open(ec_reaction_file, errors='ignore') as f:
                 for text in f:
                     if not str(text).startswith('#'):
