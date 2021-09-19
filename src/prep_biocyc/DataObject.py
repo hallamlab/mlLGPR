@@ -589,7 +589,8 @@ class DataObject(object):
                     if nComponentsToCorrupt < len(lst_ec[1:]):
                         lst_rd = np.random.choice(a=lst_ec[1:], size=nComponentsToCorrupt, replace=False)
                         for r in lst_rd:
-                            X_lst.remove(np.where(colID == dictID[r])[0])
+                            if r in dictID:
+                                X_lst.remove(np.where(colID == dictID[r])[0])
                 elif 'biosynthesis' in text:
                     lst_rxn = dg.out_degree()
                     lst_rxn = [n for n, d in sorted(lst_rxn, key=itemgetter(1))]
@@ -599,7 +600,8 @@ class DataObject(object):
                     if nComponentsToCorrupt < len(lst_ec[2:]):
                         lst_rd = np.random.choice(a=lst_ec[2:], size=nComponentsToCorrupt, replace=False)
                         for r in lst_rd:
-                            X_lst.remove(np.where(colID == dictID[r])[0])
+                            if r in dictID:
+                                X_lst.remove(np.where(colID == dictID[r])[0])
                 else:
                     if nComponentsToCorrupt < len(X_lst):
                         lst_rd = np.random.choice(a=X_lst, size=nComponentsToCorrupt, replace=False)
